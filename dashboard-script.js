@@ -49,6 +49,57 @@ function checkGameStatus() {
 }
 
 checkGameStatus();
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
+  authDomain: "taptappro-123b4.firebaseapp.com",
+  projectId: "taptappro-123b4",
+  storageBucket: "taptappro-123b4.firebasestorage.app",
+  messagingSenderId: "64834183820",
+  appId: "1:64834183820:web:3ceced5b95168e3bc951a9"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// 1. Pehle Firebase ka Config Code chalega (Jo tumne save kiya tha)
+const firebaseConfig = {
+  apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
+  authDomain: "taptappro-123b4.firebaseapp.com",
+  projectId: "taptappro-123b4",
+  storageBucket: "taptappro-123b4.firebasestorage.app",
+  messagingSenderId: "64834183820",
+  appId: "1:64834183820:web:3ceced5b95168e3bc951a9"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+
+// 2. Ab iske theek neeche tumhaara yeh Time Lock Guard chalega
+function checkGameStatus() {
+  const currentHour = new Date().getHours(); 
+  
+  if (currentHour < 6 || currentHour >= 23) {
+    document.body.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#121212; color:white; font-family:sans-serif; text-align:center; padding:20px;">
+        <h1 style="color:#ff4757; font-size:2.5rem;">💤 Game is Closed for Tonight! 💤</h1>
+        <p style="font-size:1.2rem; margin:15px 0; color:#ccc;">Take rest, protect your health, and sleep well. Your wellness matters to us!</p>
+        <p style="background:#2f3542; padding:10px 20px; border-radius:20px; font-weight:bold; color:#ffa502;">See you tomorrow morning at 6:00 AM! 🌅</p>
+      </div>
+    `;
+    return false;
+  }
+  return true;
+}
+
+checkGameStatus();
 // Global State Storage (No Hardcoded Names - User input se chalega!)
 let userProfile = {
     name: "",
