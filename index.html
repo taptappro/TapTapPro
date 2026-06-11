@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TapTap Pro - Ultimate Arcade Arena</title>
+    <link rel="stylesheet" href="dashboard-style.css">
+</head>
+<body>
+
+    <div class="auth-container" id="auth-screen">
+        <div class="auth-box">
+            <h1 class="logo-text">🔥 TapTap Pro 🔥</h1>
+            
+            <div id="register-form">
+                <h2>Create Account</h2>
+                <input type="text" id="reg-name" placeholder="Full Name" required>
+                <input type="email" id="reg-email" placeholder="Gmail Address" required>
+                <input type="tel" id="reg-phone" placeholder="Mobile Number" required>
+                <input type="password" id="reg-pass" placeholder="Password" required>
+                <input type="text" id="reg-state" placeholder="State" required>
+                <input type="text" id="reg-city" placeholder="City" required>
+                <button class="main-btn" onclick="sendOTP()">Send OTP</button>
+                
+                <div id="otp-section" style="display:none; margin-top: 10px;">
+                    <input type="text" id="otp-mobile-input" placeholder="Enter Mobile OTP" style="margin-bottom: 5px;">
+                    <input type="text" id="otp-gmail-input" placeholder="Enter Gmail OTP">
+                    <button class="main-btn success-btn" onclick="verifyAndRegister()">Verify & Register</button>
+                </div>
+                <p class="toggle-text">Already have an account? <span onclick="switchAuth('login')">Login</span></p>
+            </div>
+
+            <div id="login-form" style="display:none;">
+                <h2>Login</h2>
+                <input type="tel" id="login-phone" placeholder="Mobile Number" required>
+                <input type="password" id="login-pass" placeholder="Password" required>
+                <button class="main-btn" onclick="loginUser()">Login</button>
+                <p class="toggle-text">Don't have an account? <span onclick="switchAuth('register')">Register</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboard-screen" style="display:none;">
+        
+        <div class="panel left-panel">
+            <div class="section-card profile-card">
+                <div class="avatar-container" onclick="triggerAvatarUpload()">
+                    <img src="https://via.placeholder.com/80" id="user-avatar" alt="Avatar">
+                    <div class="avatar-overlay">📸</div>
+                </div>
+                <input type="file" id="avatar-input" style="display:none;" accept="image/*" onchange="uploadAvatar(event)">
+                <div class="profile-details">
+                    <h3 id="display-name">User</h3> 
+                    <button class="edit-btn" onclick="editProfileName()">✏️ Edit Name</button>
+                    <p class="free-limit" id="free-limit-text">3 Free Changes Left</p>
+                </div>
+            </div>
+
+            <div class="section-card balance-card">
+                <div class="wallet-box">
+                    <p>💰 Winning Wallet</p>
+                    <h2 id="winning-balance">₹0.00</h2>
+                </div>
+                <div class="wallet-box">
+                    <p>💎 Diamonds Wallet</p>
+                    <h2 id="diamond-balance">12 💎</h2>
+                </div>
+            </div>
+
+            <div class="section-card item-list-card">
+                <h4>💎 Buy Diamonds Store</h4>
+                <div class="list-container grid-list">
+                    <button class="shop-item-btn" onclick="buyDiamonds(30, 30)">₹30 = 30 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(50, 50)">₹50 = 50 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(80, 80)">₹80 = 80 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(100, 100)">₹100 = 100 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(200, 200)">₹200 = 200 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(300, 300)">₹300 = 300 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(400, 400)">₹400 = 400 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(500, 500)">₹500 = 500 💎</button>
+                    <button class="shop-item-btn" onclick="buyDiamonds(1000, 1000)">₹1000 = 1000 💎</button>
+                </div>
+            </div>
+
+            <div class="section-card withdraw-card">
+                <h4>💸 Instant Withdrawal</h4>
+                <p class="withdraw-instruction">"Withdraw small amounts via UPI. Select Bank Account for large amounts."</p>
+                
+                <div class="input-group">
+                    <input type="number" id="withdraw-amount" placeholder="Min ₹50 - Max ₹4,00,000">
+                    <select id="withdraw-type" onchange="switchWithdrawFields()">
+                        <option value="UPI">UPI Transfer</option>
+                        <option value="BANK">Bank Account</option>
+                    </select>
+                </div>
+
+                <div id="upi-input-box" class="withdraw-details-group" style="margin-top: 8px;">
+                    <input type="text" id="withdraw-upi-id" placeholder="Enter UPI ID (e.g., name@upi)">
+                </div>
+
+                <div id="bank-input-box" class="withdraw-details-group" style="margin-top: 8px; display: none;">
+                    <input type="text" id="withdraw-bank-name" placeholder="Account Holder Name" style="margin-bottom: 5px;">
+                    <input type="text" id="withdraw-bank-acc" placeholder="Bank Account Number" style="margin-bottom: 5px;">
+                    <input type="text" id="withdraw-bank-ifsc" placeholder="IFSC Code">
+                </div>
+
+                <button class="main-btn withdraw-trigger" onclick="processWithdrawal()">Withdraw Money</button>
+                <p class="withdraw-note">⚠️ Max 2 withdrawals per day. Takes up to 2 days to receive.</p>
+            </div>
+
+            <div class="section-card rewards-card">
+                <h4>🎁 Active Members Rewards</h4>
+                <div class="list-container vertical-list" id="rewards-list"></div>
+                
+                <div class="active-players-box" style="margin-top: 15px; border-top: 1px solid #333; padding-top: 10px;">
+                    <h5 style="color: #ffaa00; margin-bottom: 8px; font-size: 13px;">👥 Registered Active Referrals</h5>
+                    <div class="active-players-list" id="active-players-list-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel center-panel">
+            <div class="lobby-card">
+                <h2 class="game-title">TapTap Pro</h2>
+                <p class="game-time-banner">⏰ Operational Hours: 6:00 AM to 11:00 PM Daily</p>
+                
+                <div class="voice-lobby">
+                    <h3>🎙️ Group Audio Lobby</h3>
+                    <div class="lobby-users">
+                        <div class="lobby-slot active">👤 <span id="slot-1">User</span></div>
+                        <div class="lobby-slot" id="slot-2">👤 Slot 2</div>
+                        <div class="lobby-slot" id="slot-3">👤 Slot 3</div>
+                        <div class="lobby-slot" id="slot-4">👤 Slot 4</div>
+                    </div>
+                    <div class="mic-controls">
+                        <button class="dashboard-mic-btn red-mic" id="dash-mic" onclick="toggleDashboardMic()">Lobby Mic: OFF</button>
+                    </div>
+                </div>
+
+                <div class="play-action-zone">
+                    <p class="entry-notice">💎 4 Diamonds Entry Fee per Match</p>
+                    <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()">START 4-PLAYER MATCH</button>
+                    <p id="matchmaking-status-text" style="margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px;"></p>
+                    
+                    <div class="referral-section">
+                        <p>Need players? Share your code:</p>
+                        <div class="referral-box">
+                            <span id="ref-link">https://taptappro.com/invite?ref=771a</span>
+                            <button onclick="copyReferral()">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-info-card">
+                    <h4>🏆 Winnings Distribution Matrix</h4>
+                    <div class="matrix-grid">
+                        <div class="matrix-row">🥇 1st Winner: <span>6 Diamonds</span></div>
+                        <div class="matrix-row">🥈 2nd Winner: <span>4 Diamonds</span></div>
+                        <div class="matrix-row">🥉 3rd Winner: <span>2 Diamonds</span></div>
+                        <div class="matrix-row">❌ 4th Winner: <span>0 Diamonds</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel right-panel">
+            <div class="section-card friends-card">
+                <h4>👥 Friend List (<span id="friend-counter-text">0</span>/300)</h4>
+                <div class="friend-list-items" id="friends-box">
+                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No friends added yet. Invite your referrals!</p>
+                </div>
+            </div>
+
+            <div class="section-card requests-card">
+                <h4>📥 Friend Requests</h4>
+                <div class="request-list-items" id="requests-box">
+                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameplay-screen" style="display: none;">
+        
+        <button class="exit-match-btn" onclick="exitMatch()">🚪 Exit Match</button>
+        
+        <button class="player-btn red" id="btn-p1" onclick="playerTap(1)">
+            <div class="name-container">
+                <span class="player-name" id="name-p1">FIRST USER</span>
+                <span class="add-friend-btn" onclick="sendFriendRequest(1, event)">➕</span>
+            </div>
+            <span class="tap-instruction">👇 TAP HERE 👇</span>
+            <div class="score" id="score-p1">0</div>
+        </button>
+
+        <button class="player-btn blue" id="btn-p2" onclick="playerTap(2)">
+            <div class="name-container">
+                <span class="player-name" id="name-p2">SECOND USER</span>
+                <span class="add-friend-btn" onclick="sendFriendRequest(2, event)">➕</span>
+            </div>
+            <span class="tap-instruction">👇 TAP HERE 👇</span>
+            <div class="score" id="score-p2">0</div>
+        </button>
+
+        <div class="center-controls">
+            <div class="timer" id="timer-display">30s</div>
+            <div class="mic-section" onclick="toggleMic()">
+                <span id="mic-icon">🎙️</span>
+                <span class="mic-status-dot red-dot" id="mic-status"></span>
+            </div>
+        </div>
+
+        <button class="player-btn green" id="btn-p3" onclick="playerTap(3)">
+            <div class="name-container">
+                <span class="player-name" id="name-p3">THIRD USER</span>
+                <span class="add-friend-btn" onclick="sendFriendRequest(3, event)">➕</span>
+            </div>
+            <span class="tap-instruction">☝️ TAP HERE ☝️</span>
+            <div class="score" id="score-p3">0</div>
+        </button>
+
+        <button class="player-btn yellow" id="btn-p4" onclick="playerTap(4)">
+            <div class="name-container">
+                <span class="player-name" id="name-p4">FOURTH USER</span>
+                <span class="add-friend-btn" onclick="sendFriendRequest(4, event)">➕</span>
+            </div>
+            <span class="tap-instruction">☝️ TAP HERE ☝️</span>
+            <div class="score" id="score-p4">0</div>
+        </button>
+
+    </div>
+
+    <div class="overlay" id="start-overlay" style="display: none;">
+        <div class="start-box">
+            <p class="diamond-cost">💎 4 Diamonds will be charged</p>
+            <p class="bot-warning">👤 Waiting for 4 Real Players (No Bots!)</p>
+            <button class="start-game-btn" onclick="startGame()">PLAY GAME</button>
+        </div>
+    </div>
+
+</body>
+      </html>
