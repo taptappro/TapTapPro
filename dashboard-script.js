@@ -1,21 +1,4 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
-  authDomain: "taptappro-123b4.firebaseapp.com",
-  projectId: "taptappro-123b4",
-  storageBucket: "taptappro-123b4.firebasestorage.app",
-  messagingSenderId: "64834183820",
-  appId: "1:64834183820:web:3ceced5b95168e3bc951a9"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// 1. Pehle Firebase ka Config Code chalega (Jo tumne save kiya tha)
 const firebaseConfig = {
   apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
   authDomain: "taptappro-123b4.firebaseapp.com",
@@ -30,8 +13,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-
-// 2. Ab iske theek neeche tumhaara yeh Time Lock Guard chalega
+// Time Lock Guard
 function checkGameStatus() {
   const currentHour = new Date().getHours(); 
   
@@ -49,62 +31,12 @@ function checkGameStatus() {
 }
 
 checkGameStatus();
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
-  authDomain: "taptappro-123b4.firebaseapp.com",
-  projectId: "taptappro-123b4",
-  storageBucket: "taptappro-123b4.firebasestorage.app",
-  messagingSenderId: "64834183820",
-  appId: "1:64834183820:web:3ceced5b95168e3bc951a9"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// 1. Pehle Firebase ka Config Code chalega (Jo tumne save kiya tha)
-const firebaseConfig = {
-  apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
-  authDomain: "taptappro-123b4.firebaseapp.com",
-  projectId: "taptappro-123b4",
-  storageBucket: "taptappro-123b4.firebasestorage.app",
-  messagingSenderId: "64834183820",
-  appId: "1:64834183820:web:3ceced5b95168e3bc951a9"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-
-
-// 2. Ab iske theek neeche tumhaara yeh Time Lock Guard chalega
-function checkGameStatus() {
-  const currentHour = new Date().getHours(); 
-  
-  if (currentHour < 6 || currentHour >= 23) {
-    document.body.innerHTML = `
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#121212; color:white; font-family:sans-serif; text-align:center; padding:20px;">
-        <h1 style="color:#ff4757; font-size:2.5rem;">💤 Game is Closed for Tonight! 💤</h1>
-        <p style="font-size:1.2rem; margin:15px 0; color:#ccc;">Take rest, protect your health, and sleep well. Your wellness matters to us!</p>
-        <p style="background:#2f3542; padding:10px 20px; border-radius:20px; font-weight:bold; color:#ffa502;">See you tomorrow morning at 6:00 AM! 🌅</p>
-      </div>
-    `;
-    return false;
-  }
-  return true;
-}
-
-checkGameStatus();
-// Global State Storage (No Hardcoded Names - User input se chalega!)
+// Global State Storage
 let userProfile = {
     name: "",
     winnings: 0,
-    diamonds: 80, // Simulation ke liye shuruat mein 80 diamonds set kiye
+    diamonds: 80, 
     nameChangesLeft: 3,
     avatarChangesLeft: 3
 };
@@ -120,30 +52,30 @@ let micOn = false;
 const tapSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav');
 tapSound.volume = 0.5;
 
-// Sateek Badlav: Registered Active Referral Players List Matrix Data ko ekdum khali [] kiya
 let registeredReferrals = [];
 
+// 🔥 EKDUM SAHI AUR NAYA REWARDS MATRIX JO TUMNE DIYA HAI! 🔥
 const rewardsMatrix = [
-    { members: "10 Members", cash: "₹80", status: "claimable" },
-    { members: "20 Members", cash: "₹150", status: "claimable" },
-    { members: "50 Members", cash: "₹350", status: "claimable" },
-    { members: "100 Members", cash: "₹700", status: "claimable" },
-    { members: "500 Members", cash: "₹3,500", status: "locked" },
-    { members: "1000 Members", cash: "₹7,000", status: "locked" },
-    { members: "2000 Members", cash: "₹1,20,000", status: "locked" },
-    { members: "4000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "6000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "8000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "10000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "16000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "20000 Members", cash: "🏡 Dream House", status: "locked" },
-    { members: "40000 Members", cash: "🏡 Dream House", status: "locked" }
+    { members: "10 Members", cash: "₹80 Rupees", status: "claimable", value: "₹80" },
+    { members: "20 Members", cash: "₹150 Rupees", status: "claimable", value: "₹150" },
+    { members: "50 Members", cash: "₹350 Rupees", status: "claimable", value: "₹350" },
+    { members: "100 Members", cash: "₹700 Rupees", status: "claimable", value: "₹700" },
+    { members: "500 Members", cash: "₹3,500 Rupees", status: "claimable", value: "₹3500" },
+    { members: "1,000 Members", cash: "₹7,000 Rupees", status: "claimable", value: "₹7000" },
+    { members: "2,000 Members", cash: "₹1,20,000 Luxury Cash Pool", status: "claimable", value: "₹120000" },
+    { members: "4,000 Members", cash: "₹2,50,000 Heavy Cash Drop", status: "claimable", value: "₹250000" },
+    { members: "6,000 Members", cash: "₹3,80,000 Grand Cash Bonus", status: "claimable", value: "₹380000" },
+    { members: "8,000 Members", cash: "₹5,00,000 Mega Milestone", status: "claimable", value: "₹500000" },
+    { members: "10,000 Members", cash: "₹6,30,000 Elite Special Cash", status: "claimable", value: "₹630000" },
+    { members: "16,000 Members", cash: "₹10,00,000 Champion Cash Prize", status: "claimable", value: "₹1000000" },
+    { members: "20,000 Members", cash: "₹12,50,000 Ultimate Cash Reward", status: "claimable", value: "₹1250000" },
+    { members: "40,000 Members", cash: "🏡 DREAM HOUSE", status: "claimable", value: "🏡 DREAM HOUSE" }
 ];
 
 let lobbyMicOn = false;
-let friendsListCount = 0; // Sateek Badlav: Initial friends count ko 0 kiya kyonki list khali hai
+let friendsListCount = 0; 
 
-// Auth Switching
+// Auth Switching Function
 function switchAuth(type) {
     if(type === 'login') {
         document.getElementById('register-form').style.display = 'none';
@@ -154,7 +86,7 @@ function switchAuth(type) {
     }
 }
 
-// Sateek Badlav: Double OTP Send Karne Ka Simulator Function
+// Double OTP Send Karne Ka Simulator Function
 function sendOTP() {
     let phone = document.getElementById('reg-phone').value;
     let name = document.getElementById('reg-name').value;
@@ -168,7 +100,7 @@ function sendOTP() {
     alert("🔒 Dual Verification Sent!\n\n1. Mobile OTP sent to: " + phone + "\n2. Gmail OTP sent to: " + email + "\n\nPlease enter both codes to proceed.");
 }
 
-// Sateek Badlav: Dono Alag-Alag OTP Verify Karne Ka Function
+// Dono Alag-Alag OTP Verify Karne Ka Function
 function verifyAndRegister() {
     let mobileOtp = document.getElementById('otp-mobile-input').value;
     let gmailOtp = document.getElementById('otp-gmail-input').value;
@@ -190,7 +122,7 @@ function loginUser() {
     let phone = document.getElementById('login-phone').value;
     let pass = document.getElementById('login-pass').value;
     if(!phone || !pass) { alert("Please enter mobile number and password!"); return; }
-    userProfile.name = "Sayad Parveen"; // Bypass defaults
+    userProfile.name = "Sayad Parveen"; 
     loadDashboard();
 }
 
@@ -212,7 +144,7 @@ function updateBalancesUI() {
     document.getElementById('diamond-balance').innerText = userProfile.diamonds + " 💎";
 }
 
-// Toggle Inline Withdrawal Fields (UPI vs Bank Details)
+// Toggle Inline Withdrawal Fields
 function switchWithdrawFields() {
     let type = document.getElementById('withdraw-type').value;
     if(type === "UPI") {
@@ -246,7 +178,7 @@ function processWithdrawal() {
     }
 }
 
-// Render dynamic Active Registered Referrals underneath Rewards
+// Render dynamic Active Registered Referrals
 function renderActiveReferrals() {
     const listContainer = document.getElementById('active-players-list-box');
     listContainer.innerHTML = "";
@@ -272,7 +204,7 @@ function renderActiveReferrals() {
     });
 }
 
-// Auto Matchmaking Engine Simulator (Unknown Players Loop)
+// Auto Matchmaking Engine Simulator
 function launchGame() {
     let currentHour = new Date().getHours();
     if(currentHour < 6 || currentHour >= 23) {
@@ -290,7 +222,6 @@ function launchGame() {
     statusBox.style.color = "#00e5ff";
     statusBox.innerText = "🔍 Checking automated server & searching for online unknown players...";
 
-    // Simulated 4 seconds online matchmaking trigger loop
     setTimeout(() => {
         let playersFound = Math.random() > 0.5;
 
@@ -321,7 +252,7 @@ function launchGame() {
     }, 4000);
 }
 
-// ================= ASALI GAMEPLAY CORE LOGIC FUNCTIONS =================
+// Core Gameplay Logic
 function startGame() {
     document.getElementById('start-overlay').style.display = 'none'; 
     scores = { 1: 0, 2: 0, 3: 0, 4: 0 }; 
@@ -378,6 +309,7 @@ function toggleMic() {
     }
 }
 
+// Show Winners
 function showWinners() {
     let p1Name = document.getElementById('name-p1').innerText;
     let p2Name = document.getElementById('name-p2').innerText;
@@ -419,30 +351,34 @@ function buyDiamonds(price, count) {
     }, 1200);
 }
 
-// ================= UNIQUE UI/UX REWARDS CLAIM SYSTEM =================
+// Naya aur Sateek Reward Claiming Function
 function claimReward(cashValue, index) {
-    alert("💖 Reward " + cashValue + " claimed successfully! Dispatched directly to Winning Balance.");
+    if(cashValue.includes("DREAM HOUSE")) {
+        alert("🏡 GRAND UNLOCKED! Congratulations on Milestone 40,000! Your Dream House files and bonuses are verified!");
+    } else {
+        alert("💖 Reward " + cashValue + " claimed successfully! [ CLAIM BONUS ] ➡️ Moves to Wallet");
+        let numericVal = parseInt(cashValue.replace(/[^0-9]/g, '')) || 0;
+        userProfile.winnings += numericVal;
+    }
     
-    let numericVal = parseInt(cashValue.replace(/[^0-9]/g, '')) || 0;
-    userProfile.winnings += numericVal;
-    
-    rewardsMatrix[index].status = "locked"; 
-    
+    rewardsMatrix[index].status = "claimed"; 
     updateBalancesUI();
     renderRewards();
 }
 
+// Render Sateek Rewards List UI
 function renderRewards() {
     const list = document.getElementById('rewards-list');
+    if(!list) return;
     list.innerHTML = "";
     rewardsMatrix.forEach((item, index) => {
-        let disabledAttr = item.status === 'locked' ? 'disabled' : '';
-        let btnText = item.status === 'locked' ? '✅ Claimed' : 'Claim';
+        let disabledAttr = item.status === 'claimed' ? 'disabled' : '';
+        let btnText = item.status === 'claimed' ? '✅ Grand Unlocked' : '[ CLAIM BONUS ]';
         
         list.innerHTML += `
-            <div class="reward-item-row">
-                <span>👥 ${item.members} (${item.cash})</span>
-                <button class="claim-btn" ${disabledAttr} onclick="claimReward('${item.cash}', ${index})">${btnText}</button>
+            <div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222;">
+                <span style="font-size: 13px;">👥 ${item.members} — ${item.cash}</span>
+                <button class="claim-btn" ${disabledAttr} onclick="claimReward('${item.value}', ${index})" style="background: #ff4757; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">${btnText}</button>
             </div>
         `;
     });
@@ -464,7 +400,6 @@ function handleReq(btn, accepted) {
         friendsListCount++;
         document.getElementById('friend-counter-text').innerText = friendsListCount;
         
-        // No friends text ko chupane ke liye
         if(document.getElementById('no-friends-text')) {
             document.getElementById('no-friends-text').remove();
         }
@@ -472,7 +407,6 @@ function handleReq(btn, accepted) {
     }
     btn.closest('.request-item').remove();
     
-    // Agar requests khali ho jaye
     if(document.getElementById('requests-box').children.length === 0) {
         document.getElementById('requests-box').innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;">No pending friend requests.</p>`;
     }
@@ -480,10 +414,9 @@ function handleReq(btn, accepted) {
 
 function copyReferral() { alert("🔗 Referral link captured successfully!"); }
 function inviteToLobby(name) { alert(`📨 Group audio lobby invitation dispatched to: ${name}`); }
-// Sateek clear friend logic ke sath custom request function connect kiya
 function sendCustomFriendRequest(name) { alert(`📨 Friend request triggered successfully to referral member: ${name}!`); }
 
-// ================= EMERGENCY EXIT MATCH FUNCTION =================
+// Emergency Exit Match
 function exitMatch() {
     let confirmExit = confirm("⚠️ Are you sure you want to exit the match and return to Dashboard?");
     if (confirmExit) {
@@ -491,16 +424,14 @@ function exitMatch() {
             clearInterval(timerId);
         }
         gameActive = false;
-        
         document.getElementById('gameplay-screen').style.display = 'none';
         document.getElementById('start-overlay').style.display = 'none';
-        
         loadDashboard();
         alert("🚪 You exited the match. Returned to TapTap Pro Dashboard!");
     }
 }
 
-// ================= DYNAMIC GALLERY READERS & REAL PROFILE FUNCTIONS =================
+// Profile Customization
 function editProfileName() {
     let fee = userProfile.nameChangesLeft > 0 ? 0 : 30;
     if(fee > 0 && userProfile.diamonds < fee) {
@@ -540,14 +471,14 @@ function uploadAvatar(event) {
     let reader = new FileReader();
     reader.onload = function() {
         document.getElementById('user-avatar').src = reader.result;
-        
         if(fee > 0) {
             userProfile.diamonds -= fee;
-            alert("💎 30 Diamonds deducted for photo change!");
+    
+alert("💎 30 Diamonds deducted for photo change!");
         } else {
             userProfile.avatarChangesLeft--;
         }
         updateBalancesUI();
     }
     reader.readAsDataURL(event.target.files[0]);
-      }
+}
