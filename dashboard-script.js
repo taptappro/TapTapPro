@@ -1,3 +1,9 @@
+// 🔥 AGORA CONFIGURATION ZONE (SABSE UPAR FIRST PART MEIN JODA HAI) 🔥
+// Yahan "YOUR_AGORA_APP_ID" ko mita kar apni asli Agora App ID paste kar do!
+const AGORA_APP_ID = "7348cfbfc5e545cc8d44848aca2467db"; 
+let agoraClient = null;
+let localAudioTrack = null;
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAT1SCeif3rZf5p-29AGtmIzyEbAtf4B34",
@@ -299,13 +305,18 @@ function sendFriendRequest(playerNum, event) {
     alert("💖 Friend Request Sent to " + pName + " successfully!");
 }
 
-function toggleMic() {
+// 🔥 AGORA ACTION TUNNING JODA HAI (MID SESSION MEIN REPLACEMENT HAI) 🔥
+async function toggleMic() {
     micOn = !micOn;
     const micDot = document.getElementById('mic-status');
     if (micOn) {
         micDot.className = "mic-status-dot green-dot"; 
+        if(!agoraClient) await initVoiceEngine();
+        localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        if(agoraClient) await agoraClient.publish([localAudioTrack]);
     } else {
         micDot.className = "mic-status-dot red-dot";   
+        if(localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
     }
 }
 
@@ -384,13 +395,18 @@ function renderRewards() {
     });
 }
 
-function toggleDashboardMic() {
+// 🔥 AGORA DASHBOARD LOBBY ACTION TUNNING JODA HAI 🔥
+async function toggleDashboardMic() {
     lobbyMicOn = !lobbyMicOn;
     const micBtn = document.getElementById('dash-mic');
     if(lobbyMicOn) {
         micBtn.className = "dashboard-mic-btn green-mic"; micBtn.innerText = "Lobby Mic: ON (Green)";
+        if(!agoraClient) await initVoiceEngine();
+        localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        if(agoraClient) await agoraClient.publish([localAudioTrack]);
     } else {
         micBtn.className = "dashboard-mic-btn red-mic"; micBtn.innerText = "Lobby Mic: OFF (Red)";
+        if(localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
     }
 }
 
@@ -412,6 +428,7 @@ function handleReq(btn, accepted) {
     }
 }
 
+document.getElementById('friend-counter-text');
 function copyReferral() { alert("🔗 Referral link captured successfully!"); }
 function inviteToLobby(name) { alert(`📨 Group audio lobby invitation dispatched to: ${name}`); }
 function sendCustomFriendRequest(name) { alert(`📨 Friend request triggered successfully to referral member: ${name}!`); }
@@ -445,7 +462,7 @@ function editProfileName() {
         userProfile.diamonds -= fee;
         alert("💎 30 Diamonds deducted for name customization!");
     } else {
-        userProfile.nameChangesLeft--;
+        userProfile.nameChangeLeft--;
     }
     
     userProfile.name = newName;
@@ -481,4 +498,17 @@ alert("💎 30 Diamonds deducted for photo change!");
         updateBalancesUI();
     }
     reader.readAsDataURL(event.target.files[0]);
+}
+
+// 🔥 AGORA VOICE ENGINE CONNECTOR TRACKING LOOP (LAST SESSION MEIN JODA HAI) 🔥
+async function initVoiceEngine() {
+    if (AGORA_APP_ID === "7348cfbfc5e545cc8d44848aca2467db" || !AGORA_APP_ID) return;
+    try {
+        agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+        await agoraClient.join(AGORA_APP_ID, "TapTapVoiceLobby", null, null);
+        agoraClient.on("user-published", async (user, mediaType) => {
+            await agoraClient.subscribe(user, mediaType);
+            if (mediaType === "audio") { user.audioTrack.play(); }
+        });
+    } catch (e) { console.log("Voice issue:", e); }
 }
