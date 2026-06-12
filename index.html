@@ -235,6 +235,53 @@
             <p class="diamond-cost">💎 4 Diamonds will be charged</p>
             <p class="bot-warning">👤 Waiting for 4 Real Players (No Bots!)</p>
             <button class="start-game-btn" onclick="startGame()">PLAY GAME</button>
+            <!-- 1. Diamonds Ke Saare Packages (Buttons) -->
+<div style="display: flex; flex-direction: column; gap: 10px; max-width: 350px; margin: 20px; font-family: sans-serif;">
+  <h3 style="color: #ff4757; margin-bottom: 5px;">💎 Select Diamond Package:</h3>
+  <button class="rzp-pay-btn" data-amount="3000" data-desc="30 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 30 Diamonds — ₹30</button>
+  <button class="rzp-pay-btn" data-amount="5000" data-desc="50 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 50 Diamonds — ₹50</button>
+  <button class="rzp-pay-btn" data-amount="8000" data-desc="80 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 80 Diamonds — ₹80</button>
+  <button class="rzp-pay-btn" data-amount="10000" data-desc="100 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 100 Diamonds — ₹100</button>
+  <button class="rzp-pay-btn" data-amount="20000" data-desc="200 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 200 Diamonds — ₹200</button>
+  <button class="rzp-pay-btn" data-amount="30000" data-desc="300 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 300 Diamonds — ₹300</button>
+  <button class="rzp-pay-btn" data-amount="40000" data-desc="400 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 400 Diamonds — ₹400</button>
+  <button class="rzp-pay-btn" data-amount="50000" data-desc="500 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 500 Diamonds — ₹500</button>
+  <button class="rzp-pay-btn" data-amount="100000" data-desc="1000 Diamonds" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 1000 Diamonds — ₹1000</button>
+</div>
+
+<!-- 2. Razorpay Ka Smart Code -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "rzp_test_T0SQWbo3FA3mkz
+    "amount": "3000", 
+    "currency": "INR",
+    "name": "TapTapPro", 
+    "description": "Game Diamonds Top-Up", // 😎 Gaming vibe set!
+    "handler": function (response){
+        // 🔥 Ekdum solid gaming alert msg!
+        alert("Success! Thank you for choosing TapTapPro! Your diamonds will be credited soon. Transaction ID: " + response.razorpay_payment_id);
+    },
+    "prefill": {
+        "name": "TapTapPro", 
+        "email": "taptappro636@gmail.com  },
+    "theme": {
+        "color": "#ff4757" 
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+document.querySelectorAll('.rzp-pay-btn').forEach(function(button) {
+    button.onclick = function(e){
+        options.amount = this.getAttribute('data-amount');
+        options.description = this.getAttribute('data-desc');
+        rzp1 = new Razorpay(options);
+        rzp1.open();
+        e.preventDefault();
+    }
+});
+</script>
         </div>
     </div>
 
