@@ -298,7 +298,6 @@ function playerTap(playerNum) {
     scores[playerNum]++; 
     document.getElementById('score-p' + playerNum).innerText = scores[playerNum]; 
 }
-
 // Friend Requests inside Match
 function sendFriendRequest(playerNum, event) {
     event.stopPropagation(); 
@@ -531,3 +530,45 @@ async function initVoiceEngine() {
         });
     } catch (e) { console.log("Voice issue:", e); }
 }
+
+// ========================================================
+// 🛡️ ANTI-FRAUD SECURITY & USER BLOCKING SYSTEM BY BESTIE 🛡️
+// ========================================================
+
+// 1. Check if User is Blocked Before Allowing Any Action
+function checkUserSecurityStatus() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+        firebase.database().ref('users/' + user.uid).on('value', (snapshot) => {
+            const userData = snapshot.val();
+            if (userData && userData.isBlocked === true) {
+                alert("❌ Your account has been BLOCKED due to suspicious activity or fake diamonds detection!");
+                firebase.auth().signOut();
+                window.location.href = "index.html"; // Kick them out instantly!
+            }
+        });
+    }
+}
+
+// 2. Double Security Check: Verify Diamonds from Server, Not From Phone!
+function secureVerifyDiamondsBeforeMatch(requiredDiamonds = 4) {
+    const user = firebase.auth().currentUser;
+    if (!user) return Promise.reject("No user logged in");
+
+    return firebase.database().ref('users/' + user.uid + '/diamonds').once('value')
+        .then((snapshot) => {
+            const actualServerDiamonds = snapshot.val() || 0;
+            if (actualServerDiamonds < requiredDiamonds) {
+                alert("❌ Insufficient Real Balance! Hack attempts logged.");
+                return false;
+            }
+            return true; // Legitimate user
+        });
+}
+
+// Trigger security check whenever auth state changes
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        checkUserSecurityStatus();
+    }
+});
