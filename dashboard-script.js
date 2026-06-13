@@ -299,6 +299,7 @@ function playerTap(playerNum) {
     document.getElementById('score-p' + playerNum).innerText = scores[playerNum]; 
 }
 
+// Friend Requests inside Match
 function sendFriendRequest(playerNum, event) {
     event.stopPropagation(); 
     let pName = document.getElementById('name-p' + playerNum).innerText;
@@ -320,7 +321,7 @@ async function toggleMic() {
     }
 }
 
-// Show Winners
+// Show Winners (Yahan Par Tumhara Adsterra Popunder Ad Code Joda Hai)
 function showWinners() {
     let p1Name = document.getElementById('name-p1').innerText;
     let p2Name = document.getElementById('name-p2').innerText;
@@ -349,7 +350,26 @@ function showWinners() {
         "❌ 4th Place: " + results[3].name + " (" + results[3].score + " Taps)"
     );
 
-    loadDashboard();
+    // 🔥 ADSTERRA POPUNDER REVENUE ENGINE SYSTEM START 🔥
+    try {
+        console.log("Match over, triggering full screen high CPM revenue Popunder...");
+        
+        // Dynamic Adsterra Loader Element Injection
+        let adScript = document.createElement('script');
+        adScript.type = 'text/javascript';
+        adScript.src = '//pl26926920.highratecpm.com/c6/35/98/c635987f2e1e0a295db265c0839aeb9f.js';
+        
+        // Injecting the ad configurations safely into the layout
+        document.head.appendChild(adScript);
+    } catch(adError) {
+        console.log("Ad Blocked or network issue:", adError);
+    }
+    // 🔥 ADSTERRA POPUNDER REVENUE ENGINE SYSTEM END 🔥
+
+    // Ad smoothly execute hone ke baad back to main stage dashboard screen route
+    setTimeout(() => {
+        loadDashboard();
+    }, 800);
 }
 
 // Razorpay Gateways Simulators 
@@ -435,7 +455,7 @@ function sendCustomFriendRequest(name) { alert(`📨 Friend request triggered su
 
 // Emergency Exit Match
 function exitMatch() {
-    let confirmExit = confirm("⚠️ Are you sure you want to exit the match and return to Dashboard?");
+    let confirmExit = confirm("⚠️ Are you sure you want to exit the match and  return to Dashboard?");
     if (confirmExit) {
         if (timerId) {
             clearInterval(timerId);
@@ -462,7 +482,7 @@ function editProfileName() {
         userProfile.diamonds -= fee;
         alert("💎 30 Diamonds deducted for name customization!");
     } else {
-        userProfile.nameChangeLeft--;
+        userProfile.nameChangesLeft--;
     }
     
     userProfile.name = newName;
@@ -490,8 +510,7 @@ function uploadAvatar(event) {
         document.getElementById('user-avatar').src = reader.result;
         if(fee > 0) {
             userProfile.diamonds -= fee;
-    
-alert("💎 30 Diamonds deducted for photo change!");
+            alert("💎 30 Diamonds deducted for photo change!");
         } else {
             userProfile.avatarChangesLeft--;
         }
