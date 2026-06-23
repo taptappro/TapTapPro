@@ -62,20 +62,20 @@ let registeredReferrals = [];
 
 // 🔥 EKDUM SAHI AUR NAYA REWARDS MATRIX JO TUMNE DIYA HAI! 🔥
 const rewardsMatrix = [
-    { members: "10 Members", cash: "₹80 Rupees", status: "claimable", value: "₹80" },
-    { members: "20 Members", cash: "₹150 Rupees", status: "claimable", value: "₹150" },
-    { members: "50 Members", cash: "₹350 Rupees", status: "claimable", value: "₹350" },
-    { members: "100 Members", cash: "₹700 Rupees", status: "claimable", value: "₹700" },
-    { members: "500 Members", cash: "₹3,500 Rupees", status: "claimable", value: "₹3500" },
-    { members: "1,000 Members", cash: "₹7,000 Rupees", status: "claimable", value: "₹7000" },
-    { members: "2,000 Members", cash: "₹1,20,000 Luxury Cash Pool", status: "claimable", value: "₹120000" },
-    { members: "4,000 Members", cash: "₹2,50,000 Heavy Cash Drop", status: "claimable", value: "₹250000" },
-    { members: "6,000 Members", cash: "₹3,80,000 Grand Cash Bonus", status: "claimable", value: "₹380000" },
-    { members: "8,000 Members", cash: "₹5,00,000 Mega Milestone", status: "claimable", value: "₹500000" },
-    { members: "10,000 Members", cash: "₹6,30,000 Elite Special Cash", status: "claimable", value: "₹630000" },
-    { members: "16,000 Members", cash: "₹10,00,000 Champion Cash Prize", status: "claimable", value: "₹1000000" },
-    { members: "20,000 Members", cash: "₹12,50,000 Ultimate Cash Reward", status: "claimable", value: "₹1250000" },
-    { members: "40,000 Members", cash: "🏡 DREAM HOUSE", status: "claimable", value: "🏡 DREAM HOUSE" }
+    { targetCount: 10, members: "10 Members", cash: "₹80 Rupees", status: "locked", value: "₹80" },
+    { targetCount: 20, members: "20 Members", cash: "₹150 Rupees", status: "locked", value: "₹150" },
+    { targetCount: 50, members: "50 Members", cash: "₹350 Rupees", status: "locked", value: "₹350" },
+    { targetCount: 100, members: "100 Members", cash: "₹700 Rupees", status: "locked", value: "₹700" },
+    { targetCount: 500, members: "500 Members", cash: "₹3,500 Rupees", status: "locked", value: "₹3500" },
+    { targetCount: 1000, members: "1,000 Members", cash: "₹7,000 Rupees", status: "locked", value: "₹7000" },
+    { targetCount: 2000, members: "2,000 Members", cash: "₹1,20,000 Luxury Cash Pool", status: "locked", value: "₹120000" },
+    { targetCount: 4000, members: "4,000 Members", cash: "₹2,50,000 Heavy Cash Drop", status: "locked", value: "₹250000" },
+    { targetCount: 6000, members: "6,000 Members", cash: "₹3,80,000 Grand Cash Bonus", status: "locked", value: "₹380000" },
+    { targetCount: 8000, members: "8,000 Members", cash: "₹5,00,000 Mega Milestone", status: "locked", value: "₹500000" },
+    { targetCount: 10000, members: "10,000 Members", cash: "₹6,30,000 Elite Special Cash", status: "locked", value: "₹630000" },
+    { targetCount: 16000, members: "16,000 Members", cash: "₹10,00,000 Champion Cash Prize", status: "locked", value: "₹1000000" },
+    { targetCount: 20000, members: "20,000 Members", cash: "₹12,50,000 Ultimate Cash Reward", status: "locked", value: "₹1250000" },
+    { targetCount: 40000, members: "40,000 Members", cash: "🏡 DREAM HOUSE", status: "locked", value: "🏡 DREAM HOUSE" }
 ];
 
 let lobbyMicOn = false;
@@ -162,7 +162,7 @@ function switchWithdrawFields() {
     }
 }
 
-// Process Real-time Withdrawal Validation Rules
+// Process Real-time Withdrawal Validation Rules WITH 5% PROCESSING FEE CUT
 function processWithdrawal() {
     let amt = parseInt(document.getElementById('withdraw-amount').value);
     let type = document.getElementById('withdraw-type').value;
@@ -170,21 +170,25 @@ function processWithdrawal() {
     if(!amt || amt < 50 || amt > 400000) {
         alert("❌ Limit Warning: Withdrawal amount must be between ₹50 and ₹4,00,000"); return;
     }
+
+    // 💸 5% Withdrawal Cut Logic Setup 💸
+    let processingFee = Math.round(amt * 0.05);
+    let finalPayout = amt - processingFee;
     
     if(type === "UPI") {
         let upiId = document.getElementById('withdraw-upi-id').value;
         if(!upiId) { alert("❌ Please enter your UPI ID first!"); return; }
-        alert(`💸 Withdrawal Request of ₹${amt} registered successfully on UPI ID: ${upiId}.\n🔋 Settled under max 2 daily payouts limit. Arrives within 2 days!`);
+        alert(`💸 Withdrawal Request Submitted:\n💰 Gross Amount: ₹${amt}\n⚡ 5% Admin/Processing Fee: ₹${processingFee}\n🎁 Net Amount to UPI: ₹${finalPayout}\n\nRegistered successfully on UPI ID: ${upiId}.\n🔋 Settled under max 2 daily payouts limit. Arrives within 2 days!`);
     } else {
         let holder = document.getElementById('withdraw-bank-name').value;
         let accNum = document.getElementById('withdraw-bank-acc').value;
         let ifsc = document.getElementById('withdraw-bank-ifsc').value;
         if(!holder || !accNum || !ifsc) { alert("❌ Please enter Account Holder Name, Account Number, and IFSC Code!"); return; }
-        alert(`💸 Bank Account Transfer Request of ₹${amt} registered successfully!\n👤 Holder Name: ${holder}\n🏦 Account: ${accNum}\n🔒 IFSC Code: ${ifsc}\nProcessed automatically inside 2 days!`);
+        alert(`💸 Bank Account Transfer Request Submitted:\n💰 Gross Amount: ₹${amt}\n⚡ 5% Admin/Processing Fee: ₹${processingFee}\n🏦 Net Amount to Bank: ₹${finalPayout}\n\n👤 Holder Name: ${holder}\n🏦 Account: ${accNum}\n🔒 IFSC Code: ${ifsc}\nProcessed automatically inside 2 days!`);
     }
 }
 
-// Render dynamic Active Registered Referrals
+// Render data Active Registered Referrals
 function renderActiveReferrals() {
     const listContainer = document.getElementById('active-players-list-box');
     listContainer.innerHTML = "";
@@ -308,7 +312,7 @@ function sendFriendRequest(playerNum, event) {
 // 🔥 AGORA ACTION TUNNING JODA HAI (MID SESSION MEIN REPLACEMENT HAI) 🔥
 async function toggleMic() {
     micOn = !micOn;
-    const micDot = document.getElementById('mic-status');
+const micDot = document.getElementById('mic-status');
     if (micOn) {
         micDot.className = "mic-status-dot green-dot"; 
         if(!agoraClient) await initVoiceEngine();
@@ -320,7 +324,7 @@ async function toggleMic() {
     }
 }
 
-// Show Winners (Yahan Par Tumhara Adsterra Popunder Ad Code Joda Hai)
+// Show Winners WITH EXACT UPDATED PRIZES: 1st=₹6, 2nd=₹3, 3rd=₹2, 4th=₹0
 function showWinners() {
     let p1Name = document.getElementById('name-p1').innerText;
     let p2Name = document.getElementById('name-p2').innerText;
@@ -337,7 +341,7 @@ function showWinners() {
     results.sort((a, b) => b.score - a.score);
 
     if(results[0].id === 1) { userProfile.diamonds += 6; alert(`🏆 Congratulations! You won 1st Place with ${results[0].score} taps! Added 6 Diamonds.`); }
-    else if(results[1].id === 1) { userProfile.diamonds += 4; alert(`🥈 Good Job! You won 2nd Place with ${results[1].score} taps! Added 4 Diamonds.`); }
+    else if(results[1].id === 1) { userProfile.diamonds += 3; alert(`🥈 Good Job! You won 2nd Place with ${results[1].score} taps! Added 3 Diamonds.`); }
     else if(results[2].id === 1) { userProfile.diamonds += 2; alert(`🥉 Nice Try! You won 3rd Place with ${results[2].score} taps! Added 2 Diamonds.`); }
     else { alert(`❌ Game Over! You placed 4th. Better luck next time!`); }
 
@@ -371,24 +375,36 @@ function showWinners() {
     }, 800);
 }
 
-// Razorpay Gateways Simulators 
+// 🌐 UPDATED WITH LIVE COSMOFEED STORE LINK SECURE REDIRECTION
 function buyDiamonds(price, count) {
-    alert("💳 Redirecting to Razorpay secure UPI engine for amount ₹" + price);
+    alert("💳 Redirecting to Cosmofeed secure payment gateway for Add Diamonds...");
+    window.open("https://superprofile.bio/vp/taptappro-wallet-recharge", "_blank");
+    
+    // Developer testing mock confirmation
     setTimeout(() => {
         userProfile.diamonds += count;
-        alert(`✅ Razorpay Transaction Successful! Automatically routing back to Dashboard. Processed +${count} Diamonds.`);
+        alert(`✅ Payment Verified! Processed +${count} Diamonds safely to your account.`);
         updateBalancesUI();
-    }, 1200);
+    }, 2000);
 }
 
-// Naya aur Sateek Reward Claiming Function
+// Naya aur Secure Reward Claiming Function
 function claimReward(cashValue, index) {
+    let currentReferralsCount = registeredReferrals.length;
+    let requiredTarget = rewardsMatrix[index].targetCount;
+
+    // Strict validation: Checking if user actually met the milestone requirement
+    if (currentReferralsCount < requiredTarget) {
+        alert(`🔒 Locked! You currently have ${currentReferralsCount} active referrals. You need ${requiredTarget} active members to unlock this bonus.`);
+        return;
+    }
+
     if(cashValue.includes("DREAM HOUSE")) {
         alert("🏡 GRAND UNLOCKED! Congratulations on Milestone 40,000! Your Dream House files and bonuses are verified!");
     } else {
-        alert("💖 Reward " + cashValue + " claimed successfully! [ CLAIM BONUS ] ➡️ Moves to Wallet");
         let numericVal = parseInt(cashValue.replace(/[^0-9]/g, '')) || 0;
         userProfile.winnings += numericVal;
+        alert(`🎉 Bonus Added to Your Wallet! ₹${numericVal} has been successfully moved to your main balance.`);
     }
     
     rewardsMatrix[index].status = "claimed"; 
@@ -396,19 +412,37 @@ function claimReward(cashValue, index) {
     renderRewards();
 }
 
-// Render Sateek Rewards List UI
+// Render Rewards List UI with dynamic dynamic lock states
 function renderRewards() {
     const list = document.getElementById('rewards-list');
     if(!list) return;
     list.innerHTML = "";
+    
+    let currentReferralsCount = registeredReferrals.length;
+
     rewardsMatrix.forEach((item, index) => {
-        let disabledAttr = item.status === 'claimed' ? 'disabled' : '';
-        let btnText = item.status === 'claimed' ? '✅ Grand Unlocked' : '[ CLAIM BONUS ]';
+        let disabledAttr = "";
+        let btnText = "[ CLAIM BONUS ]";
+        let btnStyle = "background: #ff4757; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;";
+
+        if (item.status === 'claimed') {
+            disabledAttr = "disabled";
+            btnText = "✅ Claimed";
+            btnStyle = "background: #2ed573; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: not-allowed; font-size: 11px; font-weight: bold;";
+        } else if (currentReferralsCount < item.targetCount) {
+            // Target not achieved yet -> Lock the button visual state
+            btnText = "🔒 Locked";
+            btnStyle = "background: #747d8c; color: #ced6e0; border: none; padding: 4px 8px; border-radius: 4px; cursor: not-allowed; font-size: 11px; font-weight: bold;";
+        } else {
+            // Target achieved but not claimed yet -> Flash claim state
+            btnText = "🔓 Claim Now";
+            btnStyle = "background: #ffa502; color: black; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; animation: pulse 1s infinite;";
+        }
         
         list.innerHTML += `
-            <div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222;">
-                <span style="font-size: 13px;">👥 ${item.members} — ${item.cash}</span>
-                <button class="claim-btn" ${disabledAttr} onclick="claimReward('${item.value}', ${index})" style="background: #ff4757; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">${btnText}</button>
+            <div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222; align-items: center;">
+                <span style="font-size: 13px; color: ${currentReferralsCount >=item.targetCount ? '#00ff66' : '#fff'};">👥 ${item.members} — ${item.cash}</span>
+                <button class="claim-btn" ${currentReferralsCount < item.targetCount && item.status !== 'claimed' ? '' : disabledAttr} onclick="claimReward('${item.value}', ${index})" style="${btnStyle}">${btnText}</button>
             </div>
         `;
     });
