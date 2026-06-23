@@ -92,16 +92,28 @@ function switchAuth(type) {
     }
 }
 
-// Double OTP Send Karne Ka Simulator Function
-function sendOTP() {
-    let phone = document.getElementById('reg-phone').value;
-    let name = document.getElementById('reg-name').value;
-    let email = document.getElementById('reg-email').value;
+// 🔥 DUAL VERIFICATION & UNIQUE NAME CHECK ENGINE JODA HAI 🔥
+async function sendOTP() {
+    let phone = document.getElementById('reg-phone').value.trim();
+    let name = document.getElementById('reg-name').value.trim();
+    let email = document.getElementById('reg-email').value.trim();
     
     if(!phone || !name || !email) { 
-        alert("Please fill Name, Gmail, and Mobile Number fields!"); return; 
+        alert("❌ Please fill Name, Gmail, and Mobile Number fields!"); return; 
     }
     
+    // 🛡️ SECURITY CHECK: Checking if Username already exists in Firebase Firestore
+    try {
+        const nameCheck = await db.collection("users").where("name", "==", name).get();
+        if (!nameCheck.empty) {
+            alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number ya letter lagayein (Example: ${name}77 ya ${name}_pro)`);
+            return; // Stop right here, database validation failed!
+        }
+    } catch(error) {
+        console.log("Database unique name check field error:", error);
+    }
+    
+    // If username is completely unique, proceed safely to OTP simulation
     document.getElementById('otp-section').style.display = 'block';
     alert("🔒 Dual Verification Sent!\n\n1. Mobile OTP sent to: " + phone + "\n2. Gmail OTP sent to: " + email + "\n\nPlease enter both codes to proceed.");
 }
@@ -441,7 +453,7 @@ function renderRewards() {
         
         list.innerHTML += `
             <div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222; align-items: center;">
-                <span style="font-size: 13px; color: ${currentReferralsCount >=item.targetCount ? '#00ff66' : '#fff'};">👥 ${item.members} — ${item.cash}</span>
+                <span style="font-size: 13px; color: ${currentReferralsCount >= item.targetCount ? '#00ff66' : '#fff'};">👥 ${item.members} — ${item.cash}</span>
                 <button class="claim-btn" ${currentReferralsCount < item.targetCount && item.status !== 'claimed' ? '' : disabledAttr} onclick="claimReward('${item.value}', ${index})" style="${btnStyle}">${btnText}</button>
             </div>
         `;
