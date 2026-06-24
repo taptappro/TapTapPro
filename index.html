@@ -40,6 +40,56 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* Option B: Manual Referral Code Styling Parameters */
+        .referral-toggle-btn {
+            background: linear-gradient(135deg, #ffa500, #ff4757);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .referral-toggle-btn:active {
+            transform: scale(0.98);
+        }
+        .referral-input-container {
+            margin-top: 8px;
+            background: #151526;
+            border: 1px solid #2f3542;
+            padding: 10px;
+            border-radius: 6px;
+            display: none; /* JavaScript handle karega toggle execution */
+        }
+        .referral-input-container input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #333;
+            background: #0d0d1a;
+            color: white;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 6px;
+            box-sizing: border-box;
+        }
+        .referral-input-container button {
+            width: 100%;
+            padding: 8px;
+            background: #2ed573;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +151,15 @@
                 <div class="wallet-box">
                     <p>💎 Diamonds Wallet</p>
                     <h2 id="diamond-balance">12 💎</h2>
+                </div>
+            </div>
+
+            <!-- Option B Feature Segment: Placed Contextually Below Wallet System -->
+            <div class="section-card referral-manual-card" id="referral-manual-card" style="padding: 10px; margin-bottom: 15px;">
+                <button class="referral-toggle-btn" onclick="toggleReferralInputBox()">🎁 Enter Friend's Referral Code</button>
+                <div class="referral-input-container" id="referral-input-container">
+                    <input type="text" id="manual-referral-code" placeholder="Enter Referral Code (e.g., 771a)">
+                    <button onclick="applyManualReferralCode()">Apply Code</button>
                 </div>
             </div>
 
@@ -296,7 +355,8 @@
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 300 Diamonds — ₹300</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 400 Diamonds — ₹400</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 500 Diamonds — ₹500</button>
-              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 1000 Diamonds — ₹1000</button>
+              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; 
+font-weight: bold; cursor: pointer; text-align: left;">💎 1000 Diamonds — ₹1000</button>
             </div>
         </div>
     </div>
