@@ -1,0 +1,20 @@
+{
+  "short_name": "TapTap Pro",
+  "name": "TapTap Pro - Ultimate Arcade Arena",
+  "icons": [
+    {
+      "src": "7952.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "7952.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1a1a2e",
+  "background_color": "#1a1a2e"
+}
