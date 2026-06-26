@@ -67,14 +67,22 @@ body, html {
 .toggle-text { margin-top: 15px; font-size: 13px; color: #bbb; }
 .toggle-text span { color: #00e5ff; cursor: pointer; text-decoration: underline; }
 
-/* ================= 2. DASHBOARD LAYOUT ================= */
+
+/* ================= 2. FIXED PHONE DASHBOARD LAYOUT (PC & MOBILE EQUAL) ================= */
 .dashboard-container {
-    display: grid;
-    grid-template-columns: 320px 1fr 280px;
+    display: block;  /* Grid hata kar block kiya */
+    position: relative;
+    max-width: 450px; /* Hamesha ek mobile-phone ke size mein screen lock */
+    width: 100%;
     height: 100vh;
-    width: 100vw;
+    margin: 0 auto; /* Computer par ekdum beechon-beech alignment */
+    background: #14141e;
+    border-left: 2px solid #222;
+    border-right: 2px solid #222;
+    overflow: hidden;
 }
 
+/* Base Panel Default Setup */
 .panel {
     padding: 15px;
     overflow-y: auto;
@@ -82,15 +90,55 @@ body, html {
     flex-direction: column;
     gap: 15px;
     background: #14141e;
+    height: 100%;
 }
 
-.left-panel { border-right: 2px solid #222; }
-.right-panel { border-left: 2px solid #222; background: #11111a; }
+/* Main Dashboard Center Setup */
 .center-panel {
     background: #1a1a26;
     justify-content: flex-start;
     align-items: center;
+    width: 100%;
+    height: calc(100vh - 60px); /* Top nav bar ke niche space setup */
 }
+
+/* Left & Right Collapsible Sidebars Framework Added Safely */
+.left-panel {
+    position: absolute;
+    top: 0;
+    left: -100%; /* Shuruat mein screen ke left mein chhupa rahega */
+    width: 85%;  /* Phone size ke andar 85% area lega */
+    max-width: 360px;
+    height: 100%;
+    z-index: 1000;
+    border-right: 2px solid #ff4757;
+    transition: left 0.3s ease-in-out; /* Smooth slide animation */
+    box-shadow: 10px 0 25px rgba(0,0,0,0.8);
+}
+
+.right-panel {
+    position: absolute;
+    top: 0;
+    right: -100%; /* Shuruat mein screen ke right mein chhupa rahega */
+    width: 85%;
+    max-width: 360px;
+    height: 100%;
+    z-index: 1000;
+    border-left: 2px solid #ff4757;
+    background: #11111a;
+    transition: right 0.3s ease-in-out; /* Smooth slide animation */
+    box-shadow: -10px 0 25px rgba(0,0,0,0.8);
+}
+
+/* JavaScript toggle action active classes triggering layout */
+.left-panel.active-open {
+    left: 0 !important;
+}
+
+.right-panel.active-open {
+    right: 0 !important;
+}
+
 
 /* CARDS COMMON */
 .section-card {
@@ -171,30 +219,30 @@ body, html {
 .act-btn.frnd { background: #ff3b30; color: #fff; }
 
 /* ================= CENTER PANEL INTERFACE ================= */
-.lobby-card { width: 100%; max-width: 550px; text-align: center; margin-top: 20px;}
-.game-title { font-size: 36px; color: #00e5ff; text-shadow: 0 0 10px rgba(0,229,255,0.4); margin-bottom: 5px;}
-.game-time-banner { background: rgba(255,59,48,0.2); padding: 6px; border-radius: 20px; font-size: 13px; color: #ff4a4a; font-weight: bold; margin-bottom: 25px;}
+.lobby-card { width: 100%; max-width: 550px; text-align: center; margin-top: 20px; padding: 0 5px;}
+.game-title { font-size: 32px; color: #00e5ff; text-shadow: 0 0 10px rgba(0,229,255,0.4); margin-bottom: 5px;}
+.game-time-banner { background: rgba(255,59,48,0.2); padding: 6px; border-radius: 20px; font-size: 12px; color: #ff4a4a; font-weight: bold; margin-bottom: 25px;}
 
-.voice-lobby { background: #222235; padding: 20px; border-radius: 15px; border: 2px dashed #00e5ff; margin-bottom: 25px;}
+.voice-lobby { background: #222235; padding: 15px; border-radius: 15px; border: 2px dashed #00e5ff; margin-bottom: 25px;}
 .lobby-users { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-.lobby-slot { background: #14141f; padding: 12px; border-radius: 8px; color: #666; font-size: 14px;}
+.lobby-slot { background: #14141f; padding: 12px; border-radius: 8px; color: #666; font-size: 13px;}
 .lobby-slot.active { color: #00ff66; border: 1px solid #00ff66; font-weight: bold;}
 
-.dashboard-mic-btn { padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+.dashboard-mic-btn { padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 13px; }
 .red-mic { background: #ff3b30; color: white; box-shadow: 0 0 8px #ff3b30; }
 .green-mic { background: #34c759; color: white; box-shadow: 0 0 8px #34c759; }
 
-.play-action-zone { margin: 30px 0; }
-.entry-notice { color: #00e5ff; font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+.play-action-zone { margin: 25px 0; padding: 0 10px; }
+.entry-notice { color: #00e5ff; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
 .huge-play-btn {
-    width: 100%; padding: 20px; font-size: 24px; font-weight: bold;
+    width: 100%; padding: 16px; font-size: 20px; font-weight: bold;
     background: linear-gradient(135deg, #ff3b30, #ff9500); border: none; color: white;
     border-radius: 40px; cursor: pointer; box-shadow: 0 8px 20px rgba(255,59,48,0.4);
 }
 .huge-play-btn:active { transform: scale(0.97); }
 .huge-play-btn:disabled { background: #444; cursor: not-allowed; box-shadow: none; }
 
-.referral-section { margin-top: 15px; font-size: 13px; color: #aaa; }
+.referral-section { margin-top: 15px; font-size: 12px; color: #aaa; }
 .referral-box {
     display: flex; background: #14141f; padding: 8px 12px; border-radius: 6px;
     align-items: center; justify-content: space-between; margin-top: 5px; border: 1px solid #333;
@@ -203,9 +251,9 @@ body, html {
 .referral-box button { background: #00e5ff; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
 /* Matrix Style Info */
-.matrix-info-card { background: #1b1b2a; padding: 15px; border-radius: 10px; text-align: left; border: 1px solid #333;}
-.matrix-info-card h4 { margin-bottom: 8px; color: #ffaa00; font-size: 14px; }
-.matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;}
+.matrix-info-card { background: #1b1b2a; padding: 15px; border-radius: 10px; text-align: left; border: 1px solid #333; margin: 0 10px;}
+.matrix-info-card h4 { margin-bottom: 8px; color: #ffaa00; font-size: 13px; }
+.matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;}
 .matrix-row { background: #12121f; padding: 6px 10px; border-radius: 5px; display: flex; justify-content: space-between; }
 .matrix-row span { color: #00ff66; font-weight: bold; }
 
@@ -357,4 +405,13 @@ body, html {
 .exit-match-btn:active {
     transform: translateX(-50%) scale(0.95);
     background-color: #ff3b30;
+}
+
+/* Force Navigation & Close Bar Triggers display alignment */
+.mobile-header-navigation {
+    display: flex !important; /* Hamesha visible phone size layout mein */
+    height: 60px;
+}
+.sidebar-close-trigger {
+    display: block !important; /* Side panels ke andar cross close text visible */
 }
