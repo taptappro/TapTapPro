@@ -90,6 +90,70 @@
             cursor: pointer;
             font-size: 12px;
         }
+
+        /* Responsive Header Bars Controls (Mobile Hamburger Icons CSS Structure) */
+        .mobile-header-navigation {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: #121224;
+            padding: 12px 18px;
+            border-bottom: 2px solid #ff4757;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .nav-toggle-icon-btn {
+            background: #1e1e38;
+            border: 1px solid #ff4757;
+            color: white;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .header-app-title {
+            color: #fff;
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .sidebar-close-trigger {
+            display: none;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* OTP Inline Timer Graphic styling container setup */
+        .otp-countdown-wrap {
+            background: #1a1a30;
+            border-left: 3px solid #ffaa00;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .otp-countdown-wrap p {
+            margin: 3px 0;
+            font-size: 12px;
+            color: #bbb;
+        }
+        .timer-countdown-seconds {
+            color: #ff4757;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +173,12 @@
                 <input type="text" id="reg-city" placeholder="City" required>
                 <button class="main-btn" onclick="sendOTP()">Send OTP</button>
                 
+                <!-- Live Professional Timer Panel Section Added Inline Instantly -->
+                <div id="otp-timer-display-panel" class="otp-countdown-wrap" style="display: none;">
+                    <p>🔒 Security Verification Codes Generated Active!</p>
+                    <p>⏳ Code Expires In: <span class="timer-countdown-seconds" id="otp-live-timer-seconds">60s</span></p>
+                </div>
+
                 <div id="otp-section" style="display:none; margin-top: 10px;">
                     <input type="text" id="otp-mobile-input" placeholder="Enter Mobile OTP" style="margin-bottom: 5px;">
                     <input type="text" id="otp-gmail-input" placeholder="Enter Gmail OTP">
@@ -127,9 +197,19 @@
         </div>
     </div>
 
+    <!-- Mobile Responsive Top Bar Trigger Grid System Header -->
+    <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
+        <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
+        <h4 class="header-app-title">TapTap Pro</h4>
+        <button class="nav-toggle-icon-btn" onclick="toggleRightMenuSidebar()">Friends 👥 ➔</button>
+    </div>
+
     <div class="dashboard-container" id="dashboard-screen" style="display:none;">
         
-        <div class="panel left-panel">
+        <div class="panel left-panel" id="left-sidebar-panel">
+            <!-- Close trigger setup explicitly for mobile views to slide back safely -->
+            <button class="sidebar-close-trigger" id="left-sidebar-close-btn" onclick="toggleLeftMenuSidebar()">✕ Close Menu</button>
+
             <div class="section-card profile-card">
                 <div class="avatar-container" onclick="triggerAvatarUpload()">
                     <img src="https://via.placeholder.com/80" id="user-avatar" alt="Avatar">
@@ -179,7 +259,7 @@
             </div>
 
             <div class="section-card withdraw-card">
-                <h4>💸 Instant Withdrawal</h4>
+                <h4>💸 Withdrawal</h4>
                 <p class="withdraw-instruction">"Withdraw small amounts via UPI. Select Bank Account for large amounts."</p>
                 
                 <div class="input-group">
@@ -227,9 +307,9 @@
                 </script>
                 <script type="text/javascript" src="//www.highratecpm.com/bdcc1157fec9be68ad0b4f8d975ec20f/invoke.js"></script>
             </div>
-            </div>
+        </div>
 
-        <div class="panel center-panel">
+        <div class="panel center-panel" id="center-main-dashboard">
             <div class="lobby-card">
                 <h2 class="game-title">TapTap Pro</h2>
                 <p class="game-time-banner">⏰ Operational Hours: 6:00 AM to 11:00 PM Daily</p>
@@ -273,7 +353,10 @@
             </div>
         </div>
 
-        <div class="panel right-panel">
+        <div class="panel right-panel" id="right-sidebar-panel">
+            <!-- Close trigger setup explicitly for mobile views to slide back safely -->
+            <button class="sidebar-close-trigger" id="right-sidebar-close-btn" onclick="toggleRightMenuSidebar()">✕ Close Friends</button>
+
             <div class="section-card friends-card">
                 <h4>👥 Friend List (<span id="friend-counter-text">0</span>/300)</h4>
                 <div class="friend-list-items" id="friends-box">
@@ -342,7 +425,7 @@
 
     <div class="overlay" id="start-overlay" style="display: none;">
         <div class="start-box">
-            <p class="diamond-cost">💎 4 Diamonds will be charged</p>
+            <p class="diamond-cost">💎  4 Diamonds will be charged</p>
             <p class="bot-warning">👤 Waiting for 4 Real Players (No Bots!)</p>
             <button class="start-game-btn" onclick="startGame()">PLAY GAME</button>
             <div style="display: flex; flex-direction: column; gap: 10px; max-width: 350px; margin: 20px; font-family: sans-serif;">
@@ -355,8 +438,7 @@
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 300 Diamonds — ₹300</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 400 Diamonds — ₹400</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 500 Diamonds — ₹500</button>
-              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; 
-font-weight: bold; cursor: pointer; text-align: left;">💎 1000 Diamonds — ₹1000</button>
+              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 1000 Diamonds — ₹1000</button>
             </div>
         </div>
     </div>
