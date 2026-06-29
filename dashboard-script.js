@@ -89,7 +89,11 @@ const rewardsMatrix = [
 ];
 
 let lobbyMicOn = false;
-let friendsListCount = 0; 
+
+// ========================================================
+// ⭐ REAL FRIEND DATABASE ARRAY & MILSTONE SYSTEM (NO DUMMY)
+// ========================================================
+let realFriendsList = []; // Isme accept hone wale real users dynamic save honge
 
 function switchAuth(type) {
     if(type === 'login') {
@@ -290,6 +294,7 @@ function loadDashboard() {
     updateBalancesUI();
     renderRewards();
     renderActiveReferrals();
+    renderRealFriendsUI();
 }
 
 function updateBalancesUI() {
@@ -404,6 +409,96 @@ function filterActiveReferrals() {
         
         // Agar query naam ya phone se match hoti hai, toh dikhao, nahi toh chhupa do!
         if (name.includes(query) || phone.includes(query)) {
+            item.style.display = "flex";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+// ========================================================
+// 🤝 REAL FRIEND REQUEST CONTROLLERS (UPDATED WITH STAR FIELD)
+// ========================================================
+function handleReq(btn, accepted) {
+    if(accepted) {
+        if(realFriendsList.length >= 300) { 
+            alert("❌ Friend List Full! Max 300 members limit reached."); 
+            return; 
+        }
+        
+        // Jiss button ko click kiya, uss user ka naam nikalna
+        let requestItem = btn.closest('.request-item');
+        let userName = requestItem ? requestItem.innerText.replace("📥", "").split("Accept")[0].trim() : "Player Pro";
+
+        // Real array ke andar dynamic entry insert karna (default star/favorite is false)
+        realFriendsList.push({
+            name: userName,
+            isFavorite: false
+        });
+
+        // UI screen ko live update aur refresh karna
+        renderRealFriendsUI();
+        alert(`🤝 Request accepted! Added ${userName} under 300 limits tracking slots.`);
+    }
+    
+    btn.closest('.request-item').remove();
+    if(document.getElementById('requests-box').children.length === 0) {
+        document.getElementById('requests-box').innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;">No pending friend requests.</p>`;
+    }
+}
+
+// ⚡ DYNAMIC REAL FRIEND LIST RENDER ENGINE WITH AUTOMATIC STAR SORTING
+function renderRealFriendsUI() {
+    const friendsBox = document.getElementById('friends-box');
+    if (!friendsBox) return;
+    friendsBox.innerHTML = "";
+    
+    if (realFriendsList.length === 0) {
+        friendsBox.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No friends added yet. Invite your referrals!</p>`;
+        document.getElementById('friend-counter-text').innerText = "0";
+        return;
+    }
+
+    // 🔥 REAL STAR SYSTEM TIME SORTING: Jitne bhi users par star laga hoga (isFavorite = true), woh poori list mein automatic sabse upar aa jayenge!
+    realFriendsList.sort((a, b) => b.isFavorite - a.isFavorite);
+    
+    // Total counter setting
+    document.getElementById('friend-counter-text').innerText = realFriendsList.length;
+
+    // Loop chalakar real content render karna
+    realFriendsList.forEach((friend, index) => {
+        let starIcon = friend.isFavorite ? "⭐" : "🌟";
+        let starStyle = friend.isFavorite ? "color: #ffa502; font-size: 16px; cursor: pointer; margin-right: 5px;" : "opacity: 0.4; font-size: 16px; cursor: pointer; margin-right: 5px;";
+
+        friendsBox.innerHTML += `
+            <div class="friend-item" data-name="${friend.name.toLowerCase()}" style="display: flex; justify-content: space-between; align-items: center; background: #1f1f2e; padding: 10px; border-radius: 8px; margin-bottom: 6px;">
+                <div style="display: flex; align-items: center;">
+                    <span style="${starStyle}" onclick="toggleFavoriteFriendField(${index})">${starIcon}</span>
+                    <span style="font-size: 13px;">👤 ${friend.name}</span>
+                </div>
+                <span class="invite-tag" onclick="inviteToLobby('${friend.name}')">Invite 🎮</span>
+            </div>
+        `;
+    });
+}
+
+// ⚡ STAR SAVE TOGGLE TRIGGER: User kitne bhi users par star laga sakta hai!
+function toggleFavoriteFriendField(index) {
+    // True ka false, false ka true ho jayega bina kisi limit ke
+    realFriendsList[index].isFavorite = !realFriendsList[index].isFavorite;
+    
+    // Turant list ko sort karke upar lock karne ke liye render call
+    renderRealFriendsUI();
+}
+
+// ⚡ LIVE REAL-TIME FRIEND SEARCH FILTER FUNCTION
+function filterFriendList() {
+    let query = document.getElementById('friend-search-bar').value.toLowerCase().trim();
+    let items = document.querySelectorAll('#friends-box .friend-item');
+    
+    items.forEach((item) => {
+        let name = item.getAttribute('data-name');
+        if (name.includes(query)) {
             item.style.display = "flex";
         } else {
             item.style.display = "none";
@@ -641,20 +736,6 @@ async function toggleDashboardMic() {
     } else {
         micBtn.className = "dashboard-mic-btn red-mic"; micBtn.innerText = "Lobby Mic: OFF (Red)";
         if(localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
-    }
-}
-
-function handleReq(btn, accepted) {
-    if(accepted) {
-        if(friendsListCount >= 300) { alert("❌ Friend List Full! Max 300 members limit reached."); return; }
-        friendsListCount++;
-        document.getElementById('friend-counter-text').innerText = friendsListCount;
-        if(document.getElementById('no-friends-text')) document.getElementById('no-friends-text').remove();
-        alert("🤝 Request accepted! Added member under 300 limits tracking slots.");
-    }
-    btn.closest('.request-item').remove();
-    if(document.getElementById('requests-box').children.length === 0) {
-        document.getElementById('requests-box').innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;">No pending friend requests.</p>`;
     }
 }
 
