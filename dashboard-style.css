@@ -102,41 +102,55 @@ body, html {
     height: calc(100vh - 60px); /* Top nav bar ke niche space setup */
 }
 
-/* Left & Right Collapsible Sidebars Framework Added Safely */
+/* Left & Right Collapsible Sidebars Framework - FIXED FOR INFINITE MOBILE SCROLL */
 .left-panel {
     position: absolute;
-    top: 0;
-    left: -100%; /* Shuruat mein screen ke left mein chhupa rahega */
+    top: 60px; /* Top header navbar ke thik neeche se set hoga */
+    left: -100% !important; /* Shuruat mein screen ke left mein chhupa rahega */
     width: 85%;  /* Phone size ke andar 85% area lega */
     max-width: 360px;
-    height: 100%;
     z-index: 1000;
     border-right: 2px solid #ff4757;
     transition: left 0.3s ease-in-out; /* Smooth slide animation */
     box-shadow: 10px 0 25px rgba(0,0,0,0.8);
+    
+    /* 🔴 FIXED SCROLL PARAMETERS INJECTED SAFELY */
+    height: calc(100vh - 60px) !important; 
+    overflow-y: scroll !important;         /* Kitne bhi lakh users ho jayein, scroll chalega! */
+    -webkit-overflow-scrolling: touch;     /* iOS/Android touch response smoothing */
+    padding-bottom: 40px !important;       /* Sponsored Ad block ko full space dene ke liye */
 }
 
 .right-panel {
     position: absolute;
-    top: 0;
-    right: -100%; /* Shuruat mein screen ke right mein chhupa rahega */
+    top: 60px; /* Top header navbar ke thik neeche se set hoga */
+    right: -100% !important; /* Shuruat mein screen ke right mein chhupa rahega */
     width: 85%;
     max-width: 360px;
-    height: 100%;
     z-index: 1000;
     border-left: 2px solid #ff4757;
     background: #11111a;
     transition: right 0.3s ease-in-out; /* Smooth slide animation */
     box-shadow: -10px 0 25px rgba(0,0,0,0.8);
+    
+    /* 🔴 FIXED SCROLL PARAMETERS INJECTED SAFELY */
+    height: calc(100vh - 60px) !important;
+    overflow-y: scroll !important;         /* Friend requests unlimited items scroll area */
+    -webkit-overflow-scrolling: touch;     
+    padding-bottom: 40px !important;
 }
 
 /* JavaScript toggle action active classes triggering layout */
 .left-panel.active-open {
     left: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .right-panel.active-open {
     right: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 
@@ -203,7 +217,11 @@ body, html {
 
 /* Active Referral Members List Element Style */
 .active-players-list {
-    max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+    max-height: 200px; /* Thoda space badhaya taaki dynamic updates clear dikhein */
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px;
 }
 .active-user-item {
     background: #14141f; padding: 8px; border-radius: 6px; font-size: 11px;
@@ -414,4 +432,4 @@ body, html {
 }
 .sidebar-close-trigger {
     display: block !important; /* Side panels ke andar cross close text visible */
-}
+              }
