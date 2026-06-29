@@ -6,14 +6,11 @@
     <title>TapTap Pro - Ultimate Arcade Arena</title>
     <link rel="stylesheet" href="dashboard-style.css">
     
-    <!-- Forced Cache Versioning for Icon Refresh -->
     <link rel="icon" type="image/png" href="7952.png?v=1">
     <link rel="apple-touch-icon" href="7952.png?v=1">
     
-    <!-- Manifest file link for Android Chrome Logo Setup Added Safely -->
     <link rel="manifest" href="manifest.json">
     
-    <!-- Firebase Removed & Supabase CDN Added Safely -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.0.js"></script>
@@ -160,7 +157,6 @@
 
     <div class="auth-container" id="auth-screen">
         <div class="auth-box">
-            <!-- App Logo Added Safely In Place Of Text -->
             <img src="7952.png" alt="TapTap Pro Logo" class="brand-logo-img">
             
             <div id="register-form">
@@ -173,7 +169,6 @@
                 <input type="text" id="reg-city" placeholder="City" required>
                 <button class="main-btn" onclick="sendOTP()">Send OTP</button>
                 
-                <!-- Live Professional Timer Panel Section Added Inline Instantly -->
                 <div id="otp-timer-display-panel" class="otp-countdown-wrap" style="display: none;">
                     <p>🔒 Security Verification Codes Generated Active!</p>
                     <p>⏳ Code Expires In: <span class="timer-countdown-seconds" id="otp-live-timer-seconds">60s</span></p>
@@ -197,7 +192,6 @@
         </div>
     </div>
 
-    <!-- Mobile Responsive Top Bar Trigger Grid System Header -->
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
         <h4 class="header-app-title">TapTap Pro</h4>
@@ -207,7 +201,6 @@
     <div class="dashboard-container" id="dashboard-screen" style="display:none;">
         
         <div class="panel left-panel" id="left-sidebar-panel">
-            <!-- Close trigger setup explicitly for mobile views to slide back safely -->
             <button class="sidebar-close-trigger" id="left-sidebar-close-btn" onclick="toggleLeftMenuSidebar()">✕ Close Menu</button>
 
             <div class="section-card profile-card">
@@ -234,7 +227,6 @@
                 </div>
             </div>
 
-            <!-- Option B Feature Segment: Placed Contextually Below Wallet System -->
             <div class="section-card referral-manual-card" id="referral-manual-card" style="padding: 10px; margin-bottom: 15px;">
                 <button class="referral-toggle-btn" onclick="toggleReferralInputBox()">🎁 Enter Friend's Referral Code</button>
                 <div class="referral-input-container" id="referral-input-container">
@@ -290,6 +282,11 @@
                 
                 <div class="active-players-box" style="margin-top: 15px; border-top: 1px solid #333; padding-top: 10px;">
                     <h5 style="color: #ffaa00; margin-bottom: 8px; font-size: 13px;">👥 Registered Active Referrals</h5>
+                    
+                    <div style="margin-bottom: 10px; position: relative;">
+                        <input type="text" id="referral-search-bar" onkeyup="filterActiveReferrals()" placeholder="🔍 Search name or phone..." style="width: 100%; padding: 8px 12px; background: #0d0d1a; border: 1px solid #333; color: white; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                    </div>
+
                     <div class="active-players-list" id="active-players-list-box"></div>
                 </div>
             </div>
@@ -343,7 +340,7 @@
 
                 <div class="matrix-info-card">
                     <h4>🏆 Winnings Distribution Matrix</h4>
-                    <div class="matrix-grid">
+      <div class="matrix-grid">
                         <div class="matrix-row">🥇 1st Winner: <span>6 Diamonds</span></div>
                         <div class="matrix-row">🥈 2nd Winner: <span>3 Diamonds</span></div>
                         <div class="matrix-row">🥉 3rd Winner: <span>2 Diamonds</span></div>
@@ -354,7 +351,6 @@
         </div>
 
         <div class="panel right-panel" id="right-sidebar-panel">
-            <!-- Close trigger setup explicitly for mobile views to slide back safely -->
             <button class="sidebar-close-trigger" id="right-sidebar-close-btn" onclick="toggleRightMenuSidebar()">✕ Close Friends</button>
 
             <div class="section-card friends-card">
@@ -367,7 +363,7 @@
             <div class="section-card requests-card">
                 <h4>📥 Friend Requests</h4>
                 <div class="request-list-items" id="requests-box">
-                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
+                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No pending friend requests.</p>
                 </div>
             </div>
         </div>
