@@ -102,42 +102,44 @@ body, html {
     height: calc(100vh - 60px); /* Top nav bar ke niche space setup */
 }
 
-/* Left & Right Collapsible Sidebars Framework - FIXED FOR INFINITE MOBILE SCROLL */
+/* ================= FINAL SUPER SCROLL FIX FOR SIDEBARS ================= */
 .left-panel {
     position: absolute;
-    top: 60px; /* Top header navbar ke thik neeche se set hoga */
-    left: -100% !important; /* Shuruat mein screen ke left mein chhupa rahega */
-    width: 85%;  /* Phone size ke andar 85% area lega */
+    top: 60px; 
+    left: -100% !important; 
+    width: 85%;  
     max-width: 360px;
     z-index: 1000;
     border-right: 2px solid #ff4757;
-    transition: left 0.3s ease-in-out; /* Smooth slide animation */
+    transition: left 0.3s ease-in-out; 
     box-shadow: 10px 0 25px rgba(0,0,0,0.8);
     
-    /* 🔴 FIXED SCROLL PARAMETERS INJECTED SAFELY */
+    /* ⚡ FULL HEIGHT AND BOTTOM SPACE FIX */
     height: calc(100vh - 60px) !important; 
-    overflow-y: scroll !important;         /* Kitne bhi lakh users ho jayein, scroll chalega! */
-    -webkit-overflow-scrolling: touch;     /* iOS/Android touch response smoothing */
-    padding-bottom: 40px !important;       /* Sponsored Ad block ko full space dene ke liye */
+    overflow-y: auto !important;           /* Mobile browser defaults ko override karega */
+    -webkit-overflow-scrolling: touch;     
+    padding-bottom: 120px !important;      /* 🔴 NEECHE EXTRA 120px SPACE DIYA TAAKI KOI BHI LIST YA AD BROWSER MEIN NA KATE */
+    box-sizing: border-box;
 }
 
 .right-panel {
     position: absolute;
-    top: 60px; /* Top header navbar ke thik neeche se set hoga */
-    right: -100% !important; /* Shuruat mein screen ke right mein chhupa rahega */
+    top: 60px; 
+    right: -100% !important; 
     width: 85%;
     max-width: 360px;
     z-index: 1000;
     border-left: 2px solid #ff4757;
     background: #11111a;
-    transition: right 0.3s ease-in-out; /* Smooth slide animation */
+    transition: right 0.3s ease-in-out; 
     box-shadow: -10px 0 25px rgba(0,0,0,0.8);
     
-    /* 🔴 FIXED SCROLL PARAMETERS INJECTED SAFELY */
+    /* ⚡ FULL HEIGHT AND BOTTOM SPACE FIX */
     height: calc(100vh - 60px) !important;
-    overflow-y: scroll !important;         /* Friend requests unlimited items scroll area */
+    overflow-y: auto !important;         
     -webkit-overflow-scrolling: touch;     
-    padding-bottom: 40px !important;
+    padding-bottom: 120px !important;      /* Same space right panel ke liye bhi */
+    box-sizing: border-box;
 }
 
 /* JavaScript toggle action active classes triggering layout */
@@ -217,11 +219,12 @@ body, html {
 
 /* Active Referral Members List Element Style */
 .active-players-list {
-    max-height: 200px; /* Thoda space badhaya taaki dynamic updates clear dikhein */
-    overflow-y: auto; 
-    display: flex; 
-    flex-direction: column; 
+    max-height: 250px !important;
+    overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
     gap: 6px;
+    padding-bottom: 10px;
 }
 .active-user-item {
     background: #14141f; padding: 8px; border-radius: 6px; font-size: 11px;
@@ -432,4 +435,4 @@ body, html {
 }
 .sidebar-close-trigger {
     display: block !important; /* Side panels ke andar cross close text visible */
-              }
+    }
