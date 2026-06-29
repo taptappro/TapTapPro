@@ -340,7 +340,7 @@
 
                 <div class="matrix-info-card">
                     <h4>🏆 Winnings Distribution Matrix</h4>
-      <div class="matrix-grid">
+                    <div class="matrix-grid">
                         <div class="matrix-row">🥇 1st Winner: <span>6 Diamonds</span></div>
                         <div class="matrix-row">🥈 2nd Winner: <span>3 Diamonds</span></div>
                         <div class="matrix-row">🥉 3rd Winner: <span>2 Diamonds</span></div>
@@ -355,6 +355,11 @@
 
             <div class="section-card friends-card">
                 <h4>👥 Friend List (<span id="friend-counter-text">0</span>/300)</h4>
+                
+                <div style="margin-bottom: 10px; position: relative;">
+                    <input type="text" id="friend-search-bar" onkeyup="filterFriendList()" placeholder="🔍 Search friend name..." style="width: 100%; padding: 8px 12px; background: #0d0d1a; border: 1px solid #333; color: white; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                </div>
+
                 <div class="friend-list-items" id="friends-box">
                     <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No friends added yet. Invite your referrals!</p>
                 </div>
@@ -363,7 +368,7 @@
             <div class="section-card requests-card">
                 <h4>📥 Friend Requests</h4>
                 <div class="request-list-items" id="requests-box">
-                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No pending friend requests.</p>
+                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
                 </div>
             </div>
         </div>
@@ -407,6 +412,15 @@
             <span class="tap-instruction">☝️ TAP HERE ☝️</span>
             <div class="score" id="score-p3">0</div>
         </button>
+
+        <button class="player-btn yellow" id="btn-p4" onclick="playerTap(4)">
+            <div class="name-container">
+                <span class="player-name" id="name-p4">FOURTH USER</span>
+                <span class="add-friend-btn" onclick="sendFriendRequest(4, event)">➕</span>
+            </div>
+            <span class="tap-instruction">☝️ TAP HERE ☝️</span>
+            <div class="score" id="score-p4">0</div>
+       </button>
 
         <button class="player-btn yellow" id="btn-p4" onclick="playerTap(4)">
             <div class="name-container">
