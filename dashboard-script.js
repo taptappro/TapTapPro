@@ -4,9 +4,8 @@
 
 // 1. Supabase Initialization
 const SUPABASE_URL = "https://qockydrykcwtvfwzjqxj.supabase.co";
-// NOTE BESTIE: Tumhara Supabase 'sb_publishable' key galat CDN format mein hai. 
-// JavaScript Client hamesha dashboard se mili hui 'eyJhbGciOi...' wali service/anon key leta hai.
-const SUPABASE_ANON_KEY = "sb_publishable_TyQtxNxj5jBcyeg4DQ9L0Q_x9AG9XYj";
+// FIXED BESTIE: Tumhaari verified lambi 'eyJ...' anon public key yahan successfully set ho gayi hai!
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 2. Decentro Secure API Credentials
@@ -256,7 +255,7 @@ async function loginUser() {
 }
 
 // ========================================================
-// 🖥专 DASHBOARD & UI INTERFACE PIPELINES
+// 🖥 NAVIGATION DASHBOARD & UI INTERFACE PIPELINES
 // ========================================================
 function loadDashboard() {
     document.getElementById('auth-screen').style.display = 'none';
@@ -364,6 +363,9 @@ function processWithdrawal() {
     }
 }
 
+// ========================================================
+// 🔍 UPGRADED REFERRAL RENDERER WITH LIVE SEARCH FILTER
+// ========================================================
 function renderActiveReferrals() {
     const listContainer = document.getElementById('active-players-list-box');
     if(!listContainer) return;
@@ -374,9 +376,10 @@ function renderActiveReferrals() {
         return;
     }
     
+    // Sabhi referrals par loop chalega
     registeredReferrals.forEach((player) => {
         listContainer.innerHTML += `
-            <div class="active-user-item">
+            <div class="active-user-item" data-name="${player.name.toLowerCase()}" data-phone="${player.phone}">
                 <div class="active-user-top">
                     <span>👤 ${player.name}</span>
                 </div>
@@ -387,6 +390,24 @@ function renderActiveReferrals() {
                 </div>
             </div>
         `;
+    });
+}
+
+// ⚡ LIVE SEARCH FILTER FUNCTION (Naya Function Jo List Ko Turant Filter Karega)
+function filterActiveReferrals() {
+    let query = document.getElementById('referral-search-bar').value.toLowerCase().trim();
+    let items = document.querySelectorAll('#active-players-list-box .active-user-item');
+    
+    items.forEach((item) => {
+        let name = item.getAttribute('data-name');
+        let phone = item.getAttribute('data-phone');
+        
+        // Agar query naam ya phone se match hoti hai, toh dikhao, nahi toh chhupa do!
+        if (name.includes(query) || phone.includes(query)) {
+            item.style.display = "flex";
+        } else {
+            item.style.display = "none";
+        }
     });
 }
 
@@ -444,7 +465,7 @@ function launchGame() {
 }
 
 function startGame() {
-  document.getElementById('start-overlay').style.display = 'none'; 
+    document.getElementById('start-overlay').style.display = 'none'; 
     scores = { 1: 0, 2: 0, 3: 0, 4: 0 }; 
     timeLeft = 30;
     gameActive = true;
