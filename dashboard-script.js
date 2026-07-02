@@ -3,9 +3,8 @@
 // ========================================================
 
 // 1. Supabase Initialization
-const SUPABASE_URL = "https://qockydrykcwtvfwzjqxj.supabase.co";
-// FIXED BESTIE: Tumhaari verified lambi 'eyJ...' anon public key yahan successfully set ho gayi hai!
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
+const SUPABASE_URL = "YOUR_SUPABASE_URL";  "https://qockydrykcwtvfwzjqxj.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY"; "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 2. Decentro Secure API Credentials
@@ -163,7 +162,8 @@ async function registerViaCloudAuth() {
         });
 
         if (authError) {
-            alert("❌ Registration Error: " + authError.message);
+            // FIXED BESTIE: JSON.stringify lagaya hai taaki khali {} ke bajay saaf-saaf asli error details dikhein!
+            alert("❌ Registration Error Full Details: " + JSON.stringify(authError));
             regBtn.disabled = false;
             regBtn.innerText = "Register Account";
             return;
@@ -193,7 +193,8 @@ async function registerViaCloudAuth() {
 
     } catch(sbErr) {
         console.error("Core database entry error trace:", sbErr);
-        alert("Account registered! Please check your Gmail inbox to verify.");
+        // FIXED BESTIE: Catch error ko bhi detail print kiya hai
+        alert("Account registered status check: " + JSON.stringify(sbErr));
         switchAuth('login');
     }
 }
@@ -227,7 +228,7 @@ async function loginUser() {
         });
 
         if (loginError) {
-            alert("❌ Invalid Password! Please try again correctly.");
+            alert("❌ Invalid Password or Unverified Email! Please check details or verify email link.");
             return;
         }
 
@@ -241,6 +242,60 @@ async function loginUser() {
         console.log("Login critical database recovery channel trigger:", err);
         userProfile.name = "Player Pro";
         loadDashboard();
+    }
+}
+
+// ========================================================
+// 🔑 FORGOT PASSWORD CONTROLLER SYSTEM (ADDED FEATURE)
+// ========================================================
+async function forgotPassword() {
+    let email = prompt("🔑 Enter your registered Gmail Address to get Reset Link:");
+    if (!email || email.trim() === "") {
+        alert("❌ Request cancelled or email left blank!");
+        return;
+    }
+    
+    try {
+        alert("⏳ Sending password reset security token to your Gmail...");
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
+            redirectTo: window.location.href // Wapas isi game screen par laayega reset ke baad
+        });
+        
+        if (error) {
+            alert("❌ Forgot Password Error: " + JSON.stringify(error));
+        } else {
+            alert(`📨 Reset Email Dispatched!\n\nPlease check your Gmail inbox (${email}) for the official secure password reset link!`);
+        }
+    } catch(err) {
+        alert("Error handling password reset request: " + JSON.stringify(err));
+    }
+}
+
+// ========================================================
+// 🚪 PREMIUM LOGOUT USER FUNCTION (ADDED FEATURE)
+// ========================================================
+async function logoutUser() {
+    try {
+        alert("⏳ Clearing game session tokens safely...");
+        // Supabase session ko server side aur local storage dono se saaf karega
+        await supabaseClient.auth.signOut();
+        
+        // Local storage ko manually bilkul clean kar dena taaki auto-login loop na bane
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        alert("🚪 Logged Out Successfully! Session has been securely destroyed.");
+        
+        // UI screens reset karke wapas login screen dikhana
+        document.getElementById('dashboard-screen').style.display = 'none';
+        document.getElementById('mobile-top-navbar').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'flex';
+        switchAuth('login');
+        
+    } catch(err) {
+        console.error("Logout runtime execution block trace:", err);
+        // Fallback reload agar koi badi gadbad ho toh browser reset karega
+        window.location.reload();
     }
 }
 
@@ -523,7 +578,7 @@ function launchGame() {
             statusBox.innerText = "❌ Players not available! Please refer your link and active users play and earning.";
             btn.disabled = false;
             
-            alert("⚠️ Matchmaking Timeout! Active players available nahi hain. Apne referral link se dosto ko bulae, jab 4 real users ek sath lobby me honge tabhi play button click karne par turant game load hoga!");
+            alert("⚠️ Matchmaking Timeout! Active players available nahi hain. Apne referral link se dosto ko bulae, jaba 4 real users ek sath lobby me honge tabhi play button click karne par turant game load hoga!");
         }
     }, 2000); 
 }
