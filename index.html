@@ -12,7 +12,6 @@
     <link rel="manifest" href="manifest.json">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.0.js"></script>
 
     <style>
@@ -151,6 +150,46 @@
             color: #ff4757;
             font-weight: bold;
         }
+
+        /* PREMIUM LOGOUT BUTTON STYLE */
+        .logout-container {
+            margin-top: 20px;
+            padding: 0 5px;
+        }
+        .premium-logout-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .premium-logout-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 5px rgba(255, 71, 87, 0.2);
+        }
+        .forgot-password-wrap {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .forgot-btn {
+            background: none;
+            border: none;
+            color: #ffa500;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .forgot-btn:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -168,7 +207,6 @@
                 <input type="text" id="reg-state" placeholder="State" required>
                 <input type="text" id="reg-city" placeholder="City" required>
                 
-                <!-- Updated Button: Trigger direct Cloud Auth and Brevo SMTP instantly -->
                 <button class="main-btn success-btn" id="reg-main-trigger-btn" onclick="registerViaCloudAuth()">Register Account</button>
                 
                 <p class="toggle-text">Already have an account? <button class="fake-link-btn" onclick="switchAuth('login')">Login</button></p>
@@ -178,6 +216,12 @@
                 <h2>Login</h2>
                 <input type="tel" id="login-phone" placeholder="Mobile Number" required>
                 <input type="password" id="login-pass" placeholder="Password" required>
+                
+                <!-- Added Forgot Password Link -->
+                <div class="forgot-password-wrap">
+                    <button class="forgot-btn" onclick="forgotPassword()">Forgot Password?</button>
+                </div>
+
                 <button class="main-btn" onclick="loginUser()">Login</button>
                 <p class="toggle-text">Don't have an account? <button class="fake-link-btn" onclick="switchAuth('register')">Register</button></p>
             </div>
@@ -280,6 +324,11 @@
                     </div>
 
                     <div class="active-players-list" id="active-players-list-box"></div>
+                </div>
+
+                <!-- Added Premium Logout Button Right Below Active Members Rewards Area -->
+                <div class="logout-container">
+                    <button class="premium-logout-btn" onclick="logoutUser()">🚪 LOGOUT ACCOUNT</button>
                 </div>
             </div>
 
