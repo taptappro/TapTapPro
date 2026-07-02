@@ -167,18 +167,10 @@
                 <input type="password" id="reg-pass" placeholder="Password" required>
                 <input type="text" id="reg-state" placeholder="State" required>
                 <input type="text" id="reg-city" placeholder="City" required>
-                <button class="main-btn" onclick="sendOTP()">Send OTP</button>
                 
-                <div id="otp-timer-display-panel" class="otp-countdown-wrap" style="display: none;">
-                    <p>🔒 Security Verification Codes Generated Active!</p>
-                    <p>⏳ Code Expires In: <span class="timer-countdown-seconds" id="otp-live-timer-seconds">60s</span></p>
-                </div>
-
-                <div id="otp-section" style="display:none; margin-top: 10px;">
-                    <input type="text" id="otp-mobile-input" placeholder="Enter Mobile OTP" style="margin-bottom: 5px;">
-                    <input type="text" id="otp-gmail-input" placeholder="Enter Gmail OTP">
-                    <button class="main-btn success-btn" onclick="verifyAndRegister()">Verify & Register</button>
-                </div>
+                <!-- Updated Button: Trigger direct Cloud Auth and Brevo SMTP instantly -->
+                <button class="main-btn success-btn" id="reg-main-trigger-btn" onclick="registerViaCloudAuth()">Register Account</button>
+                
                 <p class="toggle-text">Already have an account? <button class="fake-link-btn" onclick="switchAuth('login')">Login</button></p>
             </div>
 
@@ -422,15 +414,6 @@
             <div class="score" id="score-p4">0</div>
        </button>
 
-        <button class="player-btn yellow" id="btn-p4" onclick="playerTap(4)">
-            <div class="name-container">
-                <span class="player-name" id="name-p4">FOURTH USER</span>
-                <span class="add-friend-btn" onclick="sendFriendRequest(4, event)">➕</span>
-            </div>
-            <span class="tap-instruction">☝️ TAP HERE ☝️</span>
-            <div class="score" id="score-p4">0</div>
-        </button>
-
     </div>
 
     <div class="overlay" id="start-overlay" style="display: none;">
@@ -440,7 +423,7 @@
             <button class="start-game-btn" onclick="startGame()">PLAY GAME</button>
             <div style="display: flex; flex-direction: column; gap: 10px; max-width: 350px; margin: 20px; font-family: sans-serif;">
               <h3 style="color: #ff4757; margin-bottom: 5px;">💎 Select Diamond Package:</h3>
-              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 30 Diamonds — ₹30</button>
+                <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 30 Diamonds — ₹30</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 50 Diamonds — ₹50</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 80 Diamonds — ₹80</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 100 Diamonds — ₹100</button>
