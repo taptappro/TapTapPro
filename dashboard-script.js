@@ -1,5 +1,5 @@
 // ========================================================
-// 🔐 MASTER CONFIGURATION ZONE (SUPABASE, DECENTRO, FAST2SMS)
+// 🔐 MASTER CONFIGURATION ZONE (SUPABASE & SECTOR CREDENTIALS)
 // ========================================================
 
 // 1. Supabase Initialization
@@ -17,13 +17,7 @@ const DECENTRO_CONFIG = {
     yblProviderSecret: "66f8c8912cd24b00b4b1cbde46b128a4"
 };
 
-// 3. Fast2SMS Engine Gateway Setup - Routing Corrected to 'dlt' configuration parameters
-const FAST2SMS_CONFIG = {
-    apiKey: "kEKjeorDNTtP4C9yQlRbzvpUGn1iJdX0wuYSH2Mc3OIqhg86BAlHLP7u38D6IUvZBWfcsdFRqAMG4wnp",
-    endpoint: "https://www.fast2sms.com/dev/bulkV2"
-};
-
-// 4. Agora Engine Variables 
+// 3. Agora Engine Variables 
 const AGORA_APP_ID = "7348cfbfc5e545cc8d44848aca2467db"; 
 let agoraClient = null;
 let localAudioTrack = null;
@@ -54,7 +48,7 @@ checkGameStatus();
 let userProfile = {
     name: "",
     winnings: 0,
-    diamonds: 0, // FIXED BESTIE: Naye user ke liye default diamond balance galti se 80 tha use 0 kar diya!
+    diamonds: 0, 
     nameChangesLeft: 3,
     avatarChangesLeft: 3,
     referredBy: null 
@@ -93,7 +87,7 @@ let lobbyMicOn = false;
 // ========================================================
 // ⭐ REAL FRIEND DATABASE ARRAY & MILSTONE SYSTEM (NO DUMMY)
 // ========================================================
-let realFriendsList = []; // Isme accept hone wale real users dynamic save honge
+let realFriendsList = []; 
 
 function switchAuth(type) {
     if(type === 'login') {
@@ -123,147 +117,84 @@ function toggleRightMenuSidebar() {
 }
 
 // ========================================================
-// 📨 DUAL VERIFICATION ENGINE WITH REVERSE TIMER (UPDATED)
+// 🔒 SECURE DIRECT GMAIL VERIFICATION ENGINE (CLEANED)
 // ========================================================
-let otpCountdownTimer = null;
-
-async function sendOTP() {
-    let phone = document.getElementById('reg-phone').value.trim();
-    let name = document.getElementById('reg-name').value.trim();
-    let email = document.getElementById('reg-email').value.trim();
-    
-    if(!phone || !name || !email) { 
-        alert("❌ Please fill Name, Gmail, and Mobile Number fields!"); return; 
-    }
-    
-    try {
-        const { data: nameCheck, error } = await supabaseClient
-            .from('users')
-            .select('name')
-            .eq('name', name);
-
-        if (!error && nameCheck && nameCheck.length > 0) {
-            alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number ya letter lagayein.`);
-            return; 
-        }
-    } catch(error) {
-        console.log("Database unique name check field error:", error);
-    }
-    
-    try {
-        let generatedOtp = Math.floor(1000 + Math.random() * 9000);
-        console.log("Secure verification channel initialized for token:", generatedOtp);
-
-        // FIXED BESTIE: Route explicitly updated to 'dlt' parameters to link with verified account configuration strings
-        const url = `${FAST2SMS_CONFIG.endpoint}?authorization=${FAST2SMS_CONFIG.apiKey}&route=dlt&sender_id=FSTSMS&message=Your Verification Code is ${generatedOtp}&variables_values=${generatedOtp}&numbers=${phone}`;
-        
-        fetch(url, { method: 'GET' })
-        .then(res => console.log("Fast2SMS engine responses routed successfully via verified DLT line."))
-        .catch(err => console.log("Network direct API request executed."));
-        
-        // FIXED BESTIE: Alert Box poori tarah blocked! Ab inline text countdown chalega screen par
-        document.getElementById('otp-section').style.display = 'block';
-        const timerPanel = document.getElementById('otp-timer-display-panel');
-        if(timerPanel) timerPanel.style.display = 'block';
-
-        let secondsRemaining = 60;
-        const timerSecondsElement = document.getElementById('otp-live-timer-seconds');
-        
-        if(otpCountdownTimer) clearInterval(otpCountdownTimer);
-        
-        otpCountdownTimer = setInterval(() => {
-            secondsRemaining--;
-            if(timerSecondsElement) timerSecondsElement.innerText = secondsRemaining + "s";
-            
-            if(secondsRemaining <= 0) {
-                clearInterval(otpCountdownTimer);
-                if(timerSecondsElement) timerSecondsElement.innerText = "Expired! Resend.";
-            }
-        }, 1000);
-
-    } catch(otpErr) {
-        console.log("SMS dispatcher unexpected fault:", otpErr);
-    }
-}
-
-// ========================================================
-// 📨 REAL DUAL VERIFICATION & SUPABASE AUTH ENGINE (UPDATED)
-// ========================================================
-async function verifyAndRegister() {
-    let mobileOtp = document.getElementById('otp-mobile-input').value;
-    let gmailOtp = document.getElementById('otp-gmail-input').value;
+async function registerViaCloudAuth() {
     let name = document.getElementById('reg-name').value.trim();
     let email = document.getElementById('reg-email').value.trim();
     let phone = document.getElementById('reg-phone').value.trim();
     let pass = document.getElementById('reg-pass').value;
     let state = document.getElementById('reg-state').value;
     let city = document.getElementById('reg-city').value;
+    let regBtn = document.getElementById('reg-main-trigger-btn');
     
-    if(!mobileOtp || !gmailOtp) {
-        alert("❌ Please enter both Mobile OTP and Gmail OTP!"); return;
+    if(!name || !email || !phone || !pass || !state || !city) { 
+        alert("❌ Please fill all the fields before registering!"); 
+        return; 
     }
     
-    // Strict digit length verification validation check
-    if(mobileOtp.length >= 4 && gmailOtp.length >= 4) {
-        if(otpCountdownTimer) clearInterval(otpCountdownTimer);
+    try {
+        regBtn.disabled = true;
+        regBtn.innerText = "⏳ Sending Verification Mail...";
         
-        try {
-            alert("⚡ Connecting with Supabase Authentication Cloud Shield...");
-            
-            // 🔒 STEP 1: REAL SUPABASE AUTHENTICATION USER CREATION
-            // Isse user Supabase ke "Authentication -> Users" dashboard mein automatic chala jayega
-            const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-                email: email,
-                password: pass,
-                options: {
-                    data: {
-                        display_name: name,
-                        phone_number: phone
-                    }
-                }
-            });
+        // 🛡️ STEP 1: Unique Username Validation check
+        const { data: nameCheck, error } = await supabaseClient
+            .from('users')
+            .select('name')
+            .eq('name', name);
 
-            if (authError) {
-                alert("❌ Auth Error: " + authError.message);
-                return;
-            }
-
-            // 📝 STEP 2: REAL SUPABASE PUBLIC USERS TABLE ROW INSERT
-            // Isse user ka baki data (Winnings, Diamonds, City, State) tumhari users table mein save hoga
-            const { data: profileData, error: tableError } = await supabaseClient
-                .from('users')
-                .insert([
-                    { 
-                        id: authData.user.id, // Auth User ID aur Table ID ko sync kar diya safely!
-                        name: name, 
-                        email: email, 
-                        phone: phone, 
-                        password: pass, 
-                        state: state, 
-                        city: city, 
-                        diamonds: 0, 
-                        winnings: 0 
-                    }
-                ]);
-
-            if (tableError) {
-                console.log("Table mapping error logs tracked safely:", tableError.message);
-            }
-
-            // Global session state profiles mapping parameters lock execution
-            userProfile.name = name;
-            userProfile.referredBy = null; 
-            
-            alert("✅ Awesome! Account Secured in Supabase Authentication & Profile Database successfully!");
-            loadDashboard();
-
-        } catch(sbErr) {
-            console.log("Supabase core registration crash logic bypass:", sbErr);
-            userProfile.name = name;
-            loadDashboard();
+        if (!error && nameCheck && nameCheck.length > 0) {
+            alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number lagayein.`);
+            regBtn.disabled = false;
+            regBtn.innerText = "Register Account";
+            return; 
         }
-    } else {
-        alert("❌ Invalid OTP! Please enter a valid 4 digit code in both fields.");
+
+        // 🔒 STEP 2: SUPABASE SIGNUP (Triggers Brevo Custom SMTP Template Instantly)
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+            email: email,
+            password: pass,
+            options: {
+                data: {
+                    display_name: name,
+                    phone_number: phone
+                }
+            }
+        });
+
+        if (authError) {
+            alert("❌ Registration Error: " + authError.message);
+            regBtn.disabled = false;
+            regBtn.innerText = "Register Account";
+            return;
+        }
+
+        // 📝 STEP 3: INSERT ROW IN PUBLIC USERS TABLE
+        await supabaseClient.from('users').insert([
+            { 
+                id: authData.user.id, 
+                name: name, 
+                email: email, 
+                phone: phone, 
+                password: pass, 
+                state: state, 
+                city: city, 
+                diamonds: 0, 
+                winnings: 0 
+            }
+        ]);
+
+        // Success Popup Notification!
+        alert(`📧 Verification Link Sent!\n\nTapTap Pro has successfully sent a verification link to your Gmail: ${email}.\n\n👉 Mobile number (${phone}) added successfully!\n👉 Dashboard tab tabhi khulega jab aap apne Gmail app mein jaakar "Confirm Email" par click karenge!`);
+        
+        switchAuth('login');
+        regBtn.disabled = false;
+        regBtn.innerText = "Register Account";
+
+    } catch(sbErr) {
+        console.error("Core database entry error trace:", sbErr);
+        alert("Account registered! Please check your Gmail inbox to verify.");
+        switchAuth('login');
     }
 }
 
@@ -279,8 +210,6 @@ async function loginUser() {
     try {
         alert("⚡ Verifying dynamic login tokens with secure cryptography lines...");
         
-        // Kyunki Supabase Auth login ke liye Phone ya Email leta hai, hum pehle 
-        // public table se phone number ke base par email dhoodh nikalenge!
         const { data: userRow, error: searchError } = await supabaseClient
             .from('users')
             .select('email, name')
@@ -292,8 +221,6 @@ async function loginUser() {
             return;
         }
 
-        // 🔒 REAL SUPABASE CLOUD AUTHENTICATION SIGN IN
-        // Real identity security matching session verify lines trigger
         const { data: loginSession, error: loginError } = await supabaseClient.auth.signInWithPassword({
             email: userRow.email,
             password: pass
@@ -304,7 +231,6 @@ async function loginUser() {
             return;
         }
 
-        // Dynamic profile data tracking parameters synchronization execution
         userProfile.name = userRow.name;
         userProfile.referredBy = null;
         
@@ -324,11 +250,10 @@ async function loginUser() {
 function loadDashboard() {
     document.getElementById('auth-screen').style.display = 'none';
     
-    // Fixed UI view initialization parameters for responsive layout setup
     const topNavbar = document.getElementById('mobile-top-navbar');
     if(topNavbar) topNavbar.style.display = 'flex';
     
-    document.getElementById('dashboard-screen').style.display = 'block'; // Grid forced to block compatibility mode
+    document.getElementById('dashboard-screen').style.display = 'block'; 
     document.getElementById('gameplay-screen').style.display = 'none';
     
     document.getElementById('display-name').innerText = userProfile.name;
@@ -340,7 +265,6 @@ function loadDashboard() {
         document.getElementById('referral-manual-card').style.display = 'block';
     }
 
-    // FIXED BESTIE: Adsterra inline auto execution re-trigger setup inside panels
     try {
         console.log("Refreshing Adsterra iframe blocks for safe active load...");
         if(window.atOptions) {
@@ -441,12 +365,11 @@ function renderActiveReferrals() {
         return;
     }
     
-    // Sabhi referrals par loop chalega
     registeredReferrals.forEach((player) => {
         listContainer.innerHTML += `
             <div class="active-user-item" data-name="${player.name.toLowerCase()}" data-phone="${player.phone}">
                 <div class="active-user-top">
-                   <span>👤 ${player.name}</span>
+                    <span>👤 ${player.name}</span>
                 </div>
                 <span class="active-user-phone">📞 ${player.phone}</span>
                 <div class="active-user-actions">
@@ -458,7 +381,6 @@ function renderActiveReferrals() {
     });
 }
 
-// ⚡ LIVE SEARCH FILTER FUNCTION (Naya Function Jo List Ko Turant Filter Karega)
 function filterActiveReferrals() {
     let query = document.getElementById('referral-search-bar').value.toLowerCase().trim();
     let items = document.querySelectorAll('#active-players-list-box .active-user-item');
@@ -467,7 +389,6 @@ function filterActiveReferrals() {
         let name = item.getAttribute('data-name');
         let phone = item.getAttribute('data-phone');
         
-        // Agar query naam ya phone se match hoti hai, toh dikhao, nahi toh chhupa do!
         if (name.includes(query) || phone.includes(query)) {
             item.style.display = "flex";
         } else {
@@ -486,17 +407,14 @@ function handleReq(btn, accepted) {
             return; 
         }
         
-        // Jiss button ko click kiya, uss user ka naam nikalna
         let requestItem = btn.closest('.request-item');
         let userName = requestItem ? requestItem.innerText.replace("📥", "").split("Accept")[0].trim() : "Player Pro";
 
-        // Real array ke andar dynamic entry insert karna (default star/favorite is false)
         realFriendsList.push({
             name: userName,
             isFavorite: false
         });
 
-        // UI screen ko live update aur refresh karna
         renderRealFriendsUI();
         alert(`🤝 Request accepted! Added ${userName} under 300 limits tracking slots.`);
     }
@@ -507,7 +425,6 @@ function handleReq(btn, accepted) {
     }
 }
 
-// ⚡ DYNAMIC REAL FRIEND LIST RENDER ENGINE WITH AUTOMATIC STAR SORTING
 function renderRealFriendsUI() {
     const friendsBox = document.getElementById('friends-box');
     if (!friendsBox) return;
@@ -519,13 +436,10 @@ function renderRealFriendsUI() {
         return;
     }
 
-    // 🔥 REAL STAR SYSTEM TIME SORTING: Jitne bhi users par star laga hoga (isFavorite = true), woh poori list mein automatic sabse upar aa jayenge!
     realFriendsList.sort((a, b) => b.isFavorite - a.isFavorite);
     
-    // Total counter setting
     document.getElementById('friend-counter-text').innerText = realFriendsList.length;
 
-    // Loop chalakar real content render karna
     realFriendsList.forEach((friend, index) => {
         let starIcon = friend.isFavorite ? "⭐" : "🌟";
         let starStyle = friend.isFavorite ? "color: #ffa502; font-size: 16px; cursor: pointer; margin-right: 5px;" : "opacity: 0.4; font-size: 16px; cursor: pointer; margin-right: 5px;";
@@ -542,16 +456,11 @@ function renderRealFriendsUI() {
     });
 }
 
-// ⚡ STAR SAVE TOGGLE TRIGGER: User kitne bhi users par star laga sakta hai!
 function toggleFavoriteFriendField(index) {
-    // True ka false, false ka true ho jayega bina kisi limit ke
     realFriendsList[index].isFavorite = !realFriendsList[index].isFavorite;
-    
-    // Turant list ko sort karke upar lock karne ke liye render call
     renderRealFriendsUI();
 }
 
-// ⚡ LIVE REAL-TIME FRIEND SEARCH FILTER FUNCTION
 function filterFriendList() {
     let query = document.getElementById('friend-search-bar').value.toLowerCase().trim();
     let items = document.querySelectorAll('#friends-box .friend-item');
@@ -864,6 +773,13 @@ async function secureVerifyDiamondsBeforeMatch(userId, requiredDiamonds = 4) {
     } catch(err) { return false; }
 }
 
+// ⚡ AUTO SESSION TRACKER HOOK (RETAINED & TRACKED WITH DYNAMIC FLOW)
 supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (session && session.user) { checkUserSecurityStatus(session.user.id); }
+    if (session && session.user) { 
+        checkUserSecurityStatus(session.user.id); 
+        if (session.user.email_confirmed_at) {
+            userProfile.name = session.user.user_metadata.display_name || "Player Pro";
+            loadDashboard(); 
+        }
+    }
 });
