@@ -4,7 +4,7 @@
 
 // 1. Supabase Initialization
 const SUPABASE_URL = "YOUR_SUPABASE_URL";  "https://qockydrykcwtvfwzjqxj.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY"; "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY";  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 2. Decentro Secure API Credentials
@@ -25,7 +25,8 @@ let localAudioTrack = null;
 // ⏰ TIME LOCK GUARD SYSTEM
 // ========================================================
 function checkGameStatus() {
-  const currentHour = new Date().getHours(); 
+  const now = new Date();
+  const currentHour = now.getHours(); 
   
   if (currentHour < 6 || currentHour >= 23) {
     document.body.innerHTML = `
@@ -119,6 +120,14 @@ function toggleRightMenuSidebar() {
 // 🔒 SECURE DIRECT GMAIL VERIFICATION ENGINE (CLEANED)
 // ========================================================
 async function registerViaCloudAuth() {
+    // ⏰ SHARP TIME LOCK CHECK FIRST FOR REGISTRATION
+    const now = new Date();
+    const currentHour = now.getHours();
+    if (currentHour < 6 || currentHour >= 23) {
+        alert("💤 TapTap Pro Registration is Closed for Tonight! Please register tomorrow morning after 6:00 AM.");
+        return;
+    }
+
     let name = document.getElementById('reg-name').value.trim();
     let email = document.getElementById('reg-email').value.trim();
     let phone = document.getElementById('reg-phone').value.trim();
@@ -149,7 +158,7 @@ async function registerViaCloudAuth() {
             return; 
         }
 
-        // 🔒 STEP 2: SUPABASE SIGNUP (Triggers Brevo Custom SMTP Template Instantly)
+        // 🔒 STEP 2: SUPABASE SIGNUP
         const { data: authData, error: authError } = await supabaseClient.auth.signUp({
             email: email,
             password: pass,
@@ -162,15 +171,14 @@ async function registerViaCloudAuth() {
         });
 
         if (authError) {
-            // FIXED BESTIE: JSON.stringify lagaya hai taaki khali {} ke bajay saaf-saaf asli error details dikhein!
-            alert("❌ Registration Error Full Details: " + JSON.stringify(authError));
+            alert("❌ Registration Error Full Details: " + (authError.message || JSON.stringify(authError)));
             regBtn.disabled = false;
             regBtn.innerText = "Register Account";
             return;
         }
 
         // 📝 STEP 3: INSERT ROW IN PUBLIC USERS TABLE
-        await supabaseClient.from('users').insert([
+        const { error: insertError } = await supabaseClient.from('users').insert([
             { 
                 id: authData.user.id, 
                 name: name, 
@@ -184,6 +192,13 @@ async function registerViaCloudAuth() {
             }
         ]);
 
+        if (insertError) {
+            alert("❌ Database Insertion Error: " + (insertError.message || JSON.stringify(insertError)));
+            regBtn.disabled = false;
+            regBtn.innerText = "Register Account";
+            return;
+        }
+
         // Success Popup Notification!
         alert(`📧 Verification Link Sent!\n\nTapTap Pro has successfully sent a verification link to your Gmail: ${email}.\n\n👉 Mobile number (${phone}) added successfully!\n👉 Dashboard tab tabhi khulega jab aap apne Gmail app mein jaakar "Confirm Email" par click karenge!`);
         
@@ -193,9 +208,9 @@ async function registerViaCloudAuth() {
 
     } catch(sbErr) {
         console.error("Core database entry error trace:", sbErr);
-        // FIXED BESTIE: Catch error ko bhi detail print kiya hai
-        alert("Account registered status check: " + JSON.stringify(sbErr));
-        switchAuth('login');
+        alert("System Status: " + (sbErr.message || "Network request interrupted. Please check internet connection and try again."));
+        regBtn.disabled = false;
+        regBtn.innerText = "Register Account";
     }
 }
 
@@ -258,7 +273,7 @@ async function forgotPassword() {
     try {
         alert("⏳ Sending password reset security token to your Gmail...");
         const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
-            redirectTo: window.location.href // Wapas isi game screen par laayega reset ke baad
+            redirectTo: window.location.href
         });
         
         if (error) {
@@ -277,16 +292,13 @@ async function forgotPassword() {
 async function logoutUser() {
     try {
         alert("⏳ Clearing game session tokens safely...");
-        // Supabase session ko server side aur local storage dono se saaf karega
         await supabaseClient.auth.signOut();
         
-        // Local storage ko manually bilkul clean kar dena taaki auto-login loop na bane
         localStorage.clear();
         sessionStorage.clear();
         
         alert("🚪 Logged Out Successfully! Session has been securely destroyed.");
         
-        // UI screens reset karke wapas login screen dikhana
         document.getElementById('dashboard-screen').style.display = 'none';
         document.getElementById('mobile-top-navbar').style.display = 'none';
         document.getElementById('auth-screen').style.display = 'flex';
@@ -294,7 +306,6 @@ async function logoutUser() {
         
     } catch(err) {
         console.error("Logout runtime execution block trace:", err);
-        // Fallback reload agar koi badi gadbad ho toh browser reset karega
         window.location.reload();
     }
 }
@@ -672,7 +683,7 @@ function showWinners() {
     );
 
     try {
-        console.log("Match over, triggering double back-to-back high CPM revenue scripts...");
+                    console.log("Match over, triggering double back-to-back high CPM revenue scripts...");
         
         let adScript1 = document.createElement('script');
         adScript1.type = 'text/javascript';
@@ -828,13 +839,43 @@ async function secureVerifyDiamondsBeforeMatch(userId, requiredDiamonds = 4) {
     } catch(err) { return false; }
 }
 
-// ⚡ AUTO SESSION TRACKER HOOK (RETAINED & TRACKED WITH DYNAMIC FLOW)
+// ⚡ STRICT AUTO SESSION TRACKER HOOK (EMAIL VERIFICATION + 1-SECOND TIME LOCK)
 supabaseClient.auth.onAuthStateChange((event, session) => {
+    // ⏰ STRICT TIME CHECK FIRST (Raat 11:00:00 PM se lekar Subah 05:59:59 AM tak block)
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+
+    if (currentHour >= 23 || currentHour < 6) {
+        alert(`💤 TapTap Pro is strictly Closed for Tonight!\n\nTimings: 6:00 AM to 11:00 PM.\nTime right now: ${currentHour}:${currentMinute}:${currentSecond}.\nPlease come back tomorrow morning at 6:00 AM sharp!`);
+        
+        supabaseClient.auth.signOut();
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        document.getElementById('dashboard-screen').style.display = 'none';
+        document.getElementById('mobile-top-navbar').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'flex';
+        switchAuth('login');
+        return; 
+    }
+
+    // 📧 EMAIL VERIFICATION CHECK (Agar time sahi hai toh)
     if (session && session.user) { 
         checkUserSecurityStatus(session.user.id); 
+        
         if (session.user.email_confirmed_at) {
             userProfile.name = session.user.user_metadata.display_name || "Player Pro";
             loadDashboard(); 
+        } else {
+            alert("⚠️ Email Not Verified!\n\nPlease check your Gmail App and click on the 'Confirm Email' link before logging in.");
+            supabaseClient.auth.signOut(); 
+            
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('mobile-top-navbar').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+            switchAuth('login');
         }
     }
 });
