@@ -175,20 +175,33 @@
             transform: scale(0.97);
             box-shadow: 0 2px 5px rgba(255, 71, 87, 0.2);
         }
-        .forgot-password-wrap {
-            margin-top: 10px;
-            text-align: right;
-        }
-        .forgot-btn {
-            background: none;
-            border: none;
-            color: #ffa500;
+
+        /* NEW GOOGLE BUTTON STYLING */
+        .google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: #ffffff;
+            color: #333333;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 13px;
-            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            margin-top: 15px;
         }
-        .forgot-btn:hover {
-            text-decoration: underline;
+        .google-login-btn:active {
+            transform: scale(0.98);
+            background: #f5f5f5;
+        }
+        .google-icon-svg {
+            width: 20px;
+            height: 20px;
         }
     </style>
 </head>
@@ -198,32 +211,32 @@
         <div class="auth-box">
             <img src="7952.png" alt="TapTap Pro Logo" class="brand-logo-img">
             
-            <div id="register-form">
-                <h2>Create Account</h2>
+            <!-- MAIN GOOGLE AUTH SCREEN -->
+            <div id="google-auth-zone">
+                <h2>Welcome to TapTap Pro</h2>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Fast & Secure Access to Arcade Arena</p>
+                
+                <button class="google-login-btn" onclick="loginWithGoogle()">
+                    <svg class="google-icon-svg" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+            </div>
+
+            <!-- REGISTRATION EXTRA DETAILS FORM (Only shows for new users first time) -->
+            <div id="extra-details-form" style="display:none;">
+                <h2>Complete Your Profile</h2>
+                <p style="color: #ffa500; font-size: 13px; margin-bottom: 15px;">Required only for your first login</p>
                 <input type="text" id="reg-name" placeholder="Full Name" required>
-                <input type="email" id="reg-email" placeholder="Gmail Address" required>
                 <input type="tel" id="reg-phone" placeholder="Mobile Number" required>
-                <input type="password" id="reg-pass" placeholder="Password" required>
                 <input type="text" id="reg-state" placeholder="State" required>
                 <input type="text" id="reg-city" placeholder="City" required>
                 
-                <button class="main-btn success-btn" id="reg-main-trigger-btn" onclick="registerViaCloudAuth()">Register Account</button>
-                
-                <p class="toggle-text">Already have an account? <button class="fake-link-btn" onclick="switchAuth('login')">Login</button></p>
-            </div>
-
-            <div id="login-form" style="display:none;">
-                <h2>Login</h2>
-                <input type="tel" id="login-phone" placeholder="Mobile Number" required>
-                <input type="password" id="login-pass" placeholder="Password" required>
-                
-                <!-- Added Forgot Password Link -->
-                <div class="forgot-password-wrap">
-                    <button class="forgot-btn" onclick="forgotPassword()">Forgot Password?</button>
-                </div>
-
-                <button class="main-btn" onclick="loginUser()">Login</button>
-                <p class="toggle-text">Don't have an account? <button class="fake-link-btn" onclick="switchAuth('register')">Register</button></p>
+                <button class="main-btn success-btn" style="margin-top: 10px;" onclick="saveExtraUserDetails()">Submit & Play</button>
             </div>
         </div>
     </div>
@@ -326,7 +339,7 @@
                     <div class="active-players-list" id="active-players-list-box"></div>
                 </div>
 
-                <!-- Added Premium Logout Button Right Below Active Members Rewards Area -->
+                <!-- Premium Logout Button -->
                 <div class="logout-container">
                     <button class="premium-logout-btn" onclick="logoutUser()">🚪 LOGOUT ACCOUNT</button>
                 </div>
@@ -424,16 +437,7 @@
                 <span class="player-name" id="name-p1">FIRST USER</span>
                 <span class="add-friend-btn" onclick="sendFriendRequest(1, event)">➕</span>
             </div>
-            <span class="tap-instruction">👇 TAP HERE 👇</span>
-            <div class="score" id="score-p1">0</div>
-        </button>
-
-        <button class="player-btn blue" id="btn-p2" onclick="playerTap(2)">
-            <div class="name-container">
-                <span class="player-name" id="name-p2">SECOND USER</span>
-                <span class="add-friend-btn" onclick="sendFriendRequest(2, event)">➕</span>
-            </div>
-            <span class="tap-instruction">👇 TAP HERE 👇</span>
+     <span class="tap-instruction">👇 TAP HERE 👇</span>
             <div class="score" id="score-p2">0</div>
         </button>
 
