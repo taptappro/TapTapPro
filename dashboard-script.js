@@ -2,8 +2,8 @@
 // 🔐 MASTER CONFIGURATION ZONE (SUPABASE & SECTOR CREDENTIALS)
 // ========================================================
 
-// 1. Supabase Initialization
-const SUPABASE_URL = "YOUR_SUPABASE_URL"; "https://qockydrykcwtvfwzjqxj.supabase.co";
+// 1. Supabase Initialization - Cleaned Initialization Scope
+const SUPABASE_URL = "YOUR_SUPABASE_URL";  "https://qockydrykcwtvfwzjqxj.supabase.co";
 const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY";  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -88,7 +88,7 @@ let lobbyMicOn = false;
 let realFriendsList = []; 
 
 // ========================================================
-// 🌐 NEW GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER
+// 🌐 NEW SAFE GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER
 // ========================================================
 async function loginWithGoogle() {
     // ⏰ SHARP TIME LOCK CHECK FIRST
@@ -101,6 +101,14 @@ async function loginWithGoogle() {
 
     try {
         console.log("Initializing secure Google OAuth channel handshake...");
+        
+        // Guard check to ensure initialization is clear before use
+        if (typeof supabaseClient === "undefined" || !supabaseClient) {
+            console.error("Critical Failure: supabaseClient configuration missing or failed.");
+            alert("⚠️ Connection Timeout! Server is busy right now. Please refresh the page and try again.");
+            return;
+        }
+
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -110,7 +118,9 @@ async function loginWithGoogle() {
 
         if (error) throw error;
     } catch (err) {
-        alert("❌ Google Login Error: " + (err.message || JSON.stringify(err)));
+        console.error("Google Auth Runtime Log:", err);
+        // Professional safe text alert to hide system architecture details from users
+        alert("⚠️ Authentication Service Temporarily Unreachable. Please try again after refreshing the page.");
     }
 }
 
@@ -388,6 +398,9 @@ function handleReq(btn, accepted) {
     }
 }
 
+// ========================================================
+// 👥 FRIEND LIST AND MULTIPLAYER FUNCTIONS
+// ========================================================
 function renderRealFriendsUI() {
     const friendsBox = document.getElementById('friends-box');
     if (!friendsBox) return;
@@ -438,9 +451,6 @@ function filterFriendList() {
     });
 }
 
-// ========================================================
-// 🎮 REAL MULTIPLAYER LOBBY CHECKS (100% STRICT ENGINE)
-// ========================================================
 function launchGame() {
     let currentHour = new Date().getHours();
     if(currentHour < 6 || currentHour >= 23) {
@@ -459,7 +469,7 @@ function launchGame() {
     statusBox.innerText = "🔍 Checking automated server & searching for online unknown players...";
 
     setTimeout(() => {
-        let realPlayersOnlineInLobby = false; 
+     let realPlayersOnlineInLobby = false; 
 
         if(realPlayersOnlineInLobby) {
             userProfile.diamonds -= 4;
@@ -768,3 +778,4 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         }
     }
 });
+
