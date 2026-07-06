@@ -3,7 +3,7 @@
 // ========================================================
 
 // 1. Supabase Initialization
-const SUPABASE_URL = "YOUR_SUPABASE_URL";  "https://qockydrykcwtvfwzjqxj.supabase.co";
+const SUPABASE_URL = "YOUR_SUPABASE_URL"; "https://qockydrykcwtvfwzjqxj.supabase.co";
 const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY";  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -46,7 +46,9 @@ checkGameStatus();
 // 🔋 GLOBAL STATE STORAGE
 // ========================================================
 let userProfile = {
+    id: "",
     name: "",
+    email: "",
     winnings: 0,
     diamonds: 0, 
     nameChangesLeft: 3,
@@ -83,24 +85,88 @@ const rewardsMatrix = [
 ];
 
 let lobbyMicOn = false;
-
-// ========================================================
-// ⭐ REAL FRIEND DATABASE ARRAY & MILSTONE SYSTEM (NO DUMMY)
-// ========================================================
 let realFriendsList = []; 
 
-function switchAuth(type) {
-    if(type === 'login') {
-        document.getElementById('register-form').style.display = 'none';
-        document.getElementById('login-form').style.display = 'block';
-    } else {
-        document.getElementById('register-form').style.display = 'block';
-        document.getElementById('login-form').style.display = 'none';
+// ========================================================
+// 🌐 NEW GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER
+// ========================================================
+async function loginWithGoogle() {
+    // ⏰ SHARP TIME LOCK CHECK FIRST
+    const now = new Date();
+    const currentHour = now.getHours();
+    if (currentHour < 6 || currentHour >= 23) {
+        alert("💤 TapTap Pro Portal is Closed for Tonight! Please login tomorrow morning after 6:00 AM.");
+        return;
+    }
+
+    try {
+        console.log("Initializing secure Google OAuth channel handshake...");
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+
+        if (error) throw error;
+    } catch (err) {
+        alert("❌ Google Login Error: " + (err.message || JSON.stringify(err)));
+    }
+}
+
+// 📝 STEP-BY-STEP EXTRA DETAILS SUBMISSION ENGINE (FOR NEW USERS)
+async function saveExtraUserDetails() {
+    let name = document.getElementById('reg-name').value.trim();
+    let phone = document.getElementById('reg-phone').value.trim();
+    let state = document.getElementById('reg-state').value.trim();
+    let city = document.getElementById('reg-city').value.trim();
+
+    if(!name || !phone || !state || !city) {
+        alert("❌ Please fill all profile details before playing!");
+        return;
+    }
+
+    try {
+        // Unique Name Check
+        const { data: nameCheck, error: nameErr } = await supabaseClient
+            .from('users')
+            .select('name')
+            .eq('name', name);
+
+        if (!nameErr && nameCheck && nameCheck.length > 0) {
+            alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number lagayein.`);
+            return;
+        }
+
+        alert("⏳ Mapping secure server fields into live gaming tables...");
+
+        const { error: insertError } = await supabaseClient.from('users').insert([
+            { 
+                id: userProfile.id, 
+                name: name, 
+                email: userProfile.email, 
+                phone: phone, 
+                state: state, 
+                city: city, 
+                diamonds: 0, 
+                winnings: 0 
+            }
+        ]);
+
+        if (insertError) throw insertError;
+
+        alert(`🎉 Account Ready! Welcome to the Arena, ${name}!`);
+        document.getElementById('extra-details-form').style.display = 'none';
+        userProfile.name = name;
+        loadDashboard();
+
+    } catch(err) {
+        alert("❌ Profile Save Error: " + (err.message || JSON.stringify(err)));
     }
 }
 
 // ========================================================
-// 📱 SIDEBAR SLIDE HAMBURGER CONTROLLERS (ADDITION)
+// 📱 SIDEBAR SLIDE HAMBURGER CONTROLLERS
 // ========================================================
 function toggleLeftMenuSidebar() {
     const leftPanel = document.getElementById('left-sidebar-panel');
@@ -117,177 +183,7 @@ function toggleRightMenuSidebar() {
 }
 
 // ========================================================
-// 🔒 SECURE DIRECT GMAIL VERIFICATION ENGINE (CLEANED)
-// ========================================================
-async function registerViaCloudAuth() {
-    // ⏰ SHARP TIME LOCK CHECK FIRST FOR REGISTRATION
-    const now = new Date();
-    const currentHour = now.getHours();
-    if (currentHour < 6 || currentHour >= 23) {
-        alert("💤 TapTap Pro Registration is Closed for Tonight! Please register tomorrow morning after 6:00 AM.");
-        return;
-    }
-
-    let name = document.getElementById('reg-name').value.trim();
-    let email = document.getElementById('reg-email').value.trim();
-    let phone = document.getElementById('reg-phone').value.trim();
-    let pass = document.getElementById('reg-pass').value;
-    let state = document.getElementById('reg-state').value;
-    let city = document.getElementById('reg-city').value;
-    let regBtn = document.getElementById('reg-main-trigger-btn');
-    
-    if(!name || !email || !phone || !pass || !state || !city) { 
-        alert("❌ Please fill all the fields before registering!"); 
-        return; 
-    }
-    
-    try {
-        regBtn.disabled = true;
-        regBtn.innerText = "⏳ Sending Verification Mail...";
-        
-        // 🛡️ STEP 1: Unique Username Validation check
-        const { data: nameCheck, error } = await supabaseClient
-            .from('users')
-            .select('name')
-            .eq('name', name);
-
-        if (!error && nameCheck && nameCheck.length > 0) {
-            alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number lagayein.`);
-            regBtn.disabled = false;
-            regBtn.innerText = "Register Account";
-            return; 
-        }
-
-        // 🔒 STEP 2: SUPABASE SIGNUP
-        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-            email: email,
-            password: pass,
-            options: {
-                data: {
-                    display_name: name,
-                    phone_number: phone
-                }
-            }
-        });
-
-        if (authError) {
-            alert("❌ Registration Error Full Details: " + (authError.message || JSON.stringify(authError)));
-            regBtn.disabled = false;
-            regBtn.innerText = "Register Account";
-            return;
-        }
-
-        // 📝 STEP 3: INSERT ROW IN PUBLIC USERS TABLE
-        const { error: insertError } = await supabaseClient.from('users').insert([
-            { 
-                id: authData.user.id, 
-                name: name, 
-                email: email, 
-                phone: phone, 
-                password: pass, 
-                state: state, 
-                city: city, 
-                diamonds: 0, 
-                winnings: 0 
-            }
-        ]);
-
-        if (insertError) {
-            alert("❌ Database Insertion Error: " + (insertError.message || JSON.stringify(insertError)));
-            regBtn.disabled = false;
-            regBtn.innerText = "Register Account";
-            return;
-        }
-
-        // Success Popup Notification!
-        alert(`📧 Verification Link Sent!\n\nTapTap Pro has successfully sent a verification link to your Gmail: ${email}.\n\n👉 Mobile number (${phone}) added successfully!\n👉 Dashboard tab tabhi khulega jab aap apne Gmail app mein jaakar "Confirm Email" par click karenge!`);
-        
-        switchAuth('login');
-        regBtn.disabled = false;
-        regBtn.innerText = "Register Account";
-
-    } catch(sbErr) {
-        console.error("Core database entry error trace:", sbErr);
-        alert("System Status: " + (sbErr.message || "Network request interrupted. Please check internet connection and try again."));
-        regBtn.disabled = false;
-        regBtn.innerText = "Register Account";
-    }
-}
-
-// 🔐 REAL SUPABASE USER LOGIN ENGINE LINKED WITH AUTHENTICATION
-async function loginUser() {
-    let phone = document.getElementById('login-phone').value.trim();
-    let pass = document.getElementById('login-pass').value.trim();
-    
-    if(!phone || !pass) { 
-        alert("❌ Please enter mobile number and password!"); return; 
-    }
-    
-    try {
-        alert("⚡ Verifying dynamic login tokens with secure cryptography lines...");
-        
-        const { data: userRow, error: searchError } = await supabaseClient
-            .from('users')
-            .select('email, name')
-            .eq('phone', phone)
-            .single();
-
-        if (searchError || !userRow) {
-            alert("❌ Mobile number not registered inside system!");
-            return;
-        }
-
-        const { data: loginSession, error: loginError } = await supabaseClient.auth.signInWithPassword({
-            email: userRow.email,
-            password: pass
-        });
-
-        if (loginError) {
-            alert("❌ Invalid Password or Unverified Email! Please check details or verify email link.");
-            return;
-        }
-
-        userProfile.name = userRow.name;
-        userProfile.referredBy = null;
-        
-        alert(`👋 Welcome back, ${userRow.name}! Session verified successfully.`);
-        loadDashboard();
-
-    } catch(err) {
-        console.log("Login critical database recovery channel trigger:", err);
-        userProfile.name = "Player Pro";
-        loadDashboard();
-    }
-}
-
-// ========================================================
-// 🔑 FORGOT PASSWORD CONTROLLER SYSTEM (ADDED FEATURE)
-// ========================================================
-async function forgotPassword() {
-    let email = prompt("🔑 Enter your registered Gmail Address to get Reset Link:");
-    if (!email || email.trim() === "") {
-        alert("❌ Request cancelled or email left blank!");
-        return;
-    }
-    
-    try {
-        alert("⏳ Sending password reset security token to your Gmail...");
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
-            redirectTo: window.location.href
-        });
-        
-        if (error) {
-            alert("❌ Forgot Password Error: " + JSON.stringify(error));
-        } else {
-            alert(`📨 Reset Email Dispatched!\n\nPlease check your Gmail inbox (${email}) for the official secure password reset link!`);
-        }
-    } catch(err) {
-        alert("Error handling password reset request: " + JSON.stringify(err));
-    }
-}
-
-// ========================================================
-// 🚪 PREMIUM LOGOUT USER FUNCTION (ADDED FEATURE)
+// 🚪 PREMIUM LOGOUT USER FUNCTION
 // ========================================================
 async function logoutUser() {
     try {
@@ -302,7 +198,8 @@ async function logoutUser() {
         document.getElementById('dashboard-screen').style.display = 'none';
         document.getElementById('mobile-top-navbar').style.display = 'none';
         document.getElementById('auth-screen').style.display = 'flex';
-        switchAuth('login');
+        document.getElementById('google-auth-zone').style.display = 'block';
+        document.getElementById('extra-details-form').style.display = 'none';
         
     } catch(err) {
         console.error("Logout runtime execution block trace:", err);
@@ -364,7 +261,7 @@ function switchWithdrawFields() {
 }
 
 // ========================================================
-// 🎁 OPTION B FEATURE: MANUAL REFERRAL BOX CONTROLLER
+// 🎁 MANUAL REFERRAL BOX CONTROLLER
 // ========================================================
 function toggleReferralInputBox() {
     const container = document.getElementById('referral-input-container');
@@ -419,7 +316,7 @@ function processWithdrawal() {
 }
 
 // ========================================================
-// 🔍 UPGRADED REFERRAL RENDERER WITH LIVE SEARCH FILTER
+// 🔍 REFERRAL RENDERER WITH LIVE SEARCH FILTER
 // ========================================================
 function renderActiveReferrals() {
     const listContainer = document.getElementById('active-players-list-box');
@@ -464,7 +361,7 @@ function filterActiveReferrals() {
 }
 
 // ========================================================
-// 🤝 REAL FRIEND REQUEST CONTROLLERS (UPDATED WITH STAR FIELD)
+// 🤝 REAL FRIEND REQUEST CONTROLLERS
 // ========================================================
 function handleReq(btn, accepted) {
     if(accepted) {
@@ -542,7 +439,7 @@ function filterFriendList() {
 }
 
 // ========================================================
-// 🎮 REAL MULTIPLAYER LOBBY CHECKS (100% STRICT ENGINE - NO BOTS)
+// 🎮 REAL MULTIPLAYER LOBBY CHECKS (100% STRICT ENGINE)
 // ========================================================
 function launchGame() {
     let currentHour = new Date().getHours();
@@ -683,20 +580,11 @@ function showWinners() {
     );
 
     try {
-                    console.log("Match over, triggering double back-to-back high CPM revenue scripts...");
-        
+        console.log("Match over, triggering double back-to-back high CPM revenue scripts...");
         let adScript1 = document.createElement('script');
         adScript1.type = 'text/javascript';
         adScript1.src = '//pl26926920.highratecpm.com/c6/35/98/c635987f2e1e0a295db265c0839aeb9f.js';
         document.head.appendChild(adScript1);
-
-        setTimeout(() => {
-            let adScript2 = document.createElement('script');
-            adScript2.type = 'text/javascript';
-            adScript2.src = '//pl26926920.highratecpm.com/c6/35/98/c635987f2e1e0a295db265c0839aeb9f.js';
-            document.head.appendChild(adScript2);
-        }, 300);
-
     } catch(adError) {
         console.log("Ad Blocked or network issue:", adError);
     }
@@ -793,7 +681,7 @@ function editProfileName() {
 
 function triggerAvatarUpload() { document.getElementById('avatar-input').click(); }
 function uploadAvatar(event) {
-    if (!event.target.files || !event.target.files[0]) return;
+  if (!event.target.files || !event.target.files[0]) return;
     let fee = userProfile.avatarChangesLeft > 0 ? 0 : 30;
     if(fee > 0 && userProfile.diamonds < fee) { alert("❌ You need 30 Diamonds to change profile photo!"); return; }
     let reader = new FileReader();
@@ -824,58 +712,59 @@ async function checkUserSecurityStatus(userId) {
         if (userData && userData.isBlocked === true) {
             alert("❌ Your account has been BLOCKED due to suspicious activity or fake diamonds detection!");
             await supabaseClient.auth.signOut();
-            window.location.href = "index.html"; 
+            window.location.reload();
         }
     } catch(err) { console.log("Security routing parameter check issue:", err); }
 }
 
-async function secureVerifyDiamondsBeforeMatch(userId, requiredDiamonds = 4) {
-    if (!userId) return false;
-    try {
-        const { data: snapshot, error } = await supabaseClient.from('users').select('diamonds').eq('id', userId).single();
-        const actualServerDiamonds = (snapshot ? snapshot.diamonds : 0) || 0;
-        if (actualServerDiamonds < requiredDiamonds) { alert("❌ Insufficient Real Balance! Hack attempts logged."); return false; }
-        return true; 
-    } catch(err) { return false; }
-}
-
-// ⚡ STRICT AUTO SESSION TRACKER HOOK (EMAIL VERIFICATION + 1-SECOND TIME LOCK)
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    // ⏰ STRICT TIME CHECK FIRST (Raat 11:00:00 PM se lekar Subah 05:59:59 AM tak block)
+// ⚡ STRICT AUTO SESSION TRACKER HOOK (INTEGRATED WITH GOOGLE OAUTH & AUTO-REGISTRATION FIELD)
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
     const now = new Date();
     const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-    const currentSecond = now.getSeconds();
 
     if (currentHour >= 23 || currentHour < 6) {
-        alert(`💤 TapTap Pro is strictly Closed for Tonight!\n\nTimings: 6:00 AM to 11:00 PM.\nTime right now: ${currentHour}:${currentMinute}:${currentSecond}.\nPlease come back tomorrow morning at 6:00 AM sharp!`);
-        
-        supabaseClient.auth.signOut();
+        alert("💤 TapTap Pro is strictly Closed for Tonight! Timings: 6:00 AM to 11:00 PM. Session destroyed.");
+        await supabaseClient.auth.signOut();
         localStorage.clear();
         sessionStorage.clear();
         
         document.getElementById('dashboard-screen').style.display = 'none';
         document.getElementById('mobile-top-navbar').style.display = 'none';
         document.getElementById('auth-screen').style.display = 'flex';
-        switchAuth('login');
+        document.getElementById('google-auth-zone').style.display = 'block';
+        document.getElementById('extra-details-form').style.display = 'none';
         return; 
     }
 
-    // 📧 EMAIL VERIFICATION CHECK (Agar time sahi hai toh)
-    if (session && session.user) { 
-        checkUserSecurityStatus(session.user.id); 
+    if (session && session.user) {
+        userProfile.id = session.user.id;
+        userProfile.email = session.user.email;
         
-        if (session.user.email_confirmed_at) {
-            userProfile.name = session.user.user_metadata.display_name || "Player Pro";
-            loadDashboard(); 
-        } else {
-            alert("⚠️ Email Not Verified!\n\nPlease check your Gmail App and click on the 'Confirm Email' link before logging in.");
-            supabaseClient.auth.signOut(); 
+        await checkUserSecurityStatus(session.user.id);
+
+        // Check if user already exists in the public users table
+        const { data: dbUser, error } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+        if (error || !dbUser) {
+            // New user detected -> Hide login button and show Extra Details Form
+            document.getElementById('google-auth-zone').style.display = 'none';
+            document.getElementById('extra-details-form').style.display = 'block';
             
-            document.getElementById('dashboard-screen').style.display = 'none';
-            document.getElementById('mobile-top-navbar').style.display = 'none';
-            document.getElementById('auth-screen').style.display = 'flex';
-            switchAuth('login');
+            // Auto-fill name field from Google account metadata if available
+            if(session.user.user_metadata && session.user.user_metadata.full_name) {
+                document.getElementById('reg-name').value = session.user.user_metadata.full_name;
+            }
+        } else {
+            // Old user detected -> Map credentials directly and launch
+            userProfile.name = dbUser.name;
+            userProfile.winnings = dbUser.winnings || 0;
+            userProfile.diamonds = dbUser.diamonds || 0;
+            userProfile.referredBy = dbUser.referredBy || null;
+            loadDashboard();
         }
     }
 });
