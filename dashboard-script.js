@@ -2,9 +2,9 @@
 // 🔐 MASTER CONFIGURATION ZONE (SUPABASE & SECTOR CREDENTIALS)
 // ========================================================
 
-// 1. Supabase Initialization - Cleaned Initialization Scope
-const SUPABASE_URL = "YOUR_SUPABASE_URL";  "https://qockydrykcwtvfwzjqxj.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_KEY";  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
+// 1. Supabase Initialization - Cleaned & Protected via Netlify Env Variables
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://qockydrykcwtvfwzjqxj.supabase.co";
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 2. Decentro Secure API Credentials
@@ -91,7 +91,6 @@ let realFriendsList = [];
 // 🌐 NEW SAFE GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER
 // ========================================================
 async function loginWithGoogle() {
-    // ⏰ SHARP TIME LOCK CHECK FIRST
     const now = new Date();
     const currentHour = now.getHours();
     if (currentHour < 6 || currentHour >= 23) {
@@ -102,7 +101,6 @@ async function loginWithGoogle() {
     try {
         console.log("Initializing secure Google OAuth channel handshake...");
         
-        // Guard check to ensure initialization is clear before use
         if (typeof supabaseClient === "undefined" || !supabaseClient) {
             console.error("Critical Failure: supabaseClient configuration missing or failed.");
             alert("⚠️ Connection Timeout! Server is busy right now. Please refresh the page and try again.");
@@ -119,7 +117,6 @@ async function loginWithGoogle() {
         if (error) throw error;
     } catch (err) {
         console.error("Google Auth Runtime Log:", err);
-        // Professional safe text alert to hide system architecture details from users
         alert("⚠️ Authentication Service Temporarily Unreachable. Please try again after refreshing the page.");
     }
 }
@@ -137,7 +134,6 @@ async function saveExtraUserDetails() {
     }
 
     try {
-        // Unique Name Check
         const { data: nameCheck, error: nameErr } = await supabaseClient
             .from('users')
             .select('name')
@@ -182,13 +178,6 @@ function toggleLeftMenuSidebar() {
     const leftPanel = document.getElementById('left-sidebar-panel');
     if(leftPanel) {
         leftPanel.classList.toggle('active-open');
-    }
-}
-
-function toggleRightMenuSidebar() {
-    const rightPanel = document.getElementById('right-sidebar-panel');
-    if(rightPanel) {
-        rightPanel.classList.toggle('active-open');
     }
 }
 
@@ -239,7 +228,6 @@ function loadDashboard() {
     }
 
     try {
-        console.log("Refreshing Adsterra iframe blocks for safe active load...");
         if(window.atOptions) {
             let container = document.querySelector('.ad-card');
             if(container && !container.querySelector('iframe')) {
@@ -413,7 +401,6 @@ function renderRealFriendsUI() {
     }
 
     realFriendsList.sort((a, b) => b.isFavorite - a.isFavorite);
-    
     document.getElementById('friend-counter-text').innerText = realFriendsList.length;
 
     realFriendsList.forEach((friend, index) => {
@@ -475,7 +462,7 @@ function launchGame() {
             userProfile.diamonds -= 4;
             updateBalancesUI();
 
-            statusBox.style.color = "#00ff66";
+           statusBox.style.color = "#00ff66";
             statusBox.innerText = "🎮 Real Unknown Players Found! Syncing voice lobbys & launching Battle Arena...";
             setTimeout(() => {
                 statusBox.innerText = "";
@@ -590,7 +577,6 @@ function showWinners() {
     );
 
     try {
-        console.log("Match over, triggering double back-to-back high CPM revenue scripts...");
         let adScript1 = document.createElement('script');
         adScript1.type = 'text/javascript';
         adScript1.src = '//pl26926920.highratecpm.com/c6/35/98/c635987f2e1e0a295db265c0839aeb9f.js';
@@ -752,7 +738,6 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         
         await checkUserSecurityStatus(session.user.id);
 
-        // Check if user already exists in the public users table
         const { data: dbUser, error } = await supabaseClient
             .from('users')
             .select('*')
@@ -760,16 +745,13 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
             .single();
 
         if (error || !dbUser) {
-            // New user detected -> Hide login button and show Extra Details Form
             document.getElementById('google-auth-zone').style.display = 'none';
             document.getElementById('extra-details-form').style.display = 'block';
             
-            // Auto-fill name field from Google account metadata if available
             if(session.user.user_metadata && session.user.user_metadata.full_name) {
                 document.getElementById('reg-name').value = session.user.user_metadata.full_name;
             }
         } else {
-            // Old user detected -> Map credentials directly and launch
             userProfile.name = dbUser.name;
             userProfile.winnings = dbUser.winnings || 0;
             userProfile.diamonds = dbUser.diamonds || 0;
@@ -778,4 +760,3 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         }
     }
 });
-
