@@ -89,7 +89,7 @@ let lobbyMicOn = false;
 let realFriendsList = []; 
 
 // ========================================================
-// 🌐 NEW SAFE GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER
+// 🌐 NEW SAFE GOOGLE OAUTH SECURITY AUTHENTICATION TRIGGER (URL NAME FIX)
 // ========================================================
 async function loginWithGoogle() {
     const now = new Date();
@@ -108,10 +108,11 @@ async function loginWithGoogle() {
             return;
         }
 
+        // 🎯 FIX: window.location.origin ko hata kar direct standard domain specify kiya hai taaki safe mapping ho sake
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin
+                redirectTo: 'https://taptappro.netlify.app'
             }
         });
 
@@ -460,7 +461,7 @@ function launchGame() {
     setTimeout(() => {
      let realPlayersOnlineInLobby = false; 
 
-        if(realPlayersOnlineInLobby) {
+         if(realPlayersOnlineInLobby) {
             userProfile.diamonds -= 4;
             updateBalancesUI();
 
@@ -550,6 +551,7 @@ async function toggleMic() {
     }
 }
 
+// (Common utilities settings)
 function showWinners() {
     let p1Name = document.getElementById('name-p1').innerText;
     let p2Name = document.getElementById('name-p2').innerText;
