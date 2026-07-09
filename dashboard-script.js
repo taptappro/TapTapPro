@@ -420,6 +420,7 @@ function renderRealFriendsUI() {
     });
 }
 
+// (Bache hue common functions bilkul un-touched hain)
 function toggleFavoriteFriendField(index) {
     realFriendsList[index].isFavorite = !realFriendsList[index].isFavorite;
     renderRealFriendsUI();
@@ -714,7 +715,9 @@ async function checkUserSecurityStatus(userId) {
     } catch(err) { console.log("Security routing parameter check issue:", err); }
 }
 
-// ⚡ STRICT AUTO SESSION TRACKER HOOK (INTEGRATED WITH GOOGLE OAUTH & AUTO-REGISTRATION FIELD)
+// ========================================================
+// ⚡ STRICT AUTO SESSION TRACKER HOOK (PATCHED FOR BLANK SCREEN)
+// ========================================================
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
     const now = new Date();
     const currentHour = now.getHours();
@@ -739,25 +742,38 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         
         await checkUserSecurityStatus(session.user.id);
 
-        const { data: dbUser, error } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+        // 🚀 BADA BADLAV: Blank screen se bachne ke liye details form ko pehle hi screen par force-show karo!
+        const formElement = document.getElementById('extra-details-form');
+        const authZoneElement = document.getElementById('google-auth-zone');
+        
+        if (formElement) formElement.style.display = 'block';
+        if (authZoneElement) authZoneElement.style.display = 'none';
 
-        if (error || !dbUser) {
-            document.getElementById('google-auth-zone').style.display = 'none';
-            document.getElementById('extra-details-form').style.display = 'block';
-            
-            if(session.user.user_metadata && session.user.user_metadata.full_name) {
-                document.getElementById('reg-name').value = session.user.user_metadata.full_name;
+        // Auto-fill name field from Google account metadata if available
+        if(session.user.user_metadata && session.user.user_metadata.full_name) {
+            const nameInput = document.getElementById('reg-name');
+            if (nameInput) nameInput.value = session.user.user_metadata.full_name;
+        }
+
+        // Background check to see if user data already exists in the live 'users' table
+        try {
+            const { data: dbUser, error } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+            if (!error && dbUser) {
+                // Agar user purana hai toh registration form chhupao aur seedhe main lobby load karo
+                if (formElement) formElement.style.display = 'none';
+                userProfile.name = dbUser.name;
+                userProfile.winnings = dbUser.winnings || 0;
+                userProfile.diamonds = dbUser.diamonds || 0;
+                userProfile.referredBy = dbUser.referredBy || null;
+                loadDashboard();
             }
-        } else {
-            userProfile.name = dbUser.name;
-            userProfile.winnings = dbUser.winnings || 0;
-            userProfile.diamonds = dbUser.diamonds || 0;
-            userProfile.referredBy = dbUser.referredBy || null;
-            loadDashboard();
+        } catch(tableErr) {
+            console.log("Safe onboarding check bypassed successfully:", tableErr);
         }
     }
 });
