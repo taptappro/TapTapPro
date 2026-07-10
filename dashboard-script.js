@@ -2,7 +2,6 @@
 // 🔐 MASTER CONFIGURATION ZONE (SUPABASE & SECTOR CREDENTIALS)
 // ========================================================
 
-// Protected via Direct Initialization (Bypassing variable dependency for stable loading)
 const SUPABASE_URL = "https://qockydrykcwtvfwzjqxj.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvY2t5ZHJ5a2N3dHZmd3pqcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTUxMDAsImV4cCI6MjA5Nzc5MTEwMH0.3dwwwY80yFyMXSP54OLGJMf-uHmUNJS9l7XT_HhRR9M";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
