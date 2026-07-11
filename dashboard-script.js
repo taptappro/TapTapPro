@@ -107,11 +107,10 @@ async function loginWithGoogle() {
             return;
         }
 
-        // 🎯 FIX: window.location.origin ko hata kar direct standard domain specify kiya hai taaki safe mapping ho sake
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: 'https://taptappro.netlify.app'
+                redirectTo: 'https://taptappro.onrender.com'
             }
         });
 
@@ -144,8 +143,6 @@ async function saveExtraUserDetails() {
             alert(`⚠️ Name Already Taken!\n\n"${name}" se pehle hi koi register kar chuka hai. Please apne naam ke aage koi number lagayein.`);
             return;
         }
-
-        alert("⏳ Mapping secure server fields into live gaming tables...");
 
         const { error: insertError } = await supabaseClient.from('users').insert([
             { 
@@ -187,7 +184,6 @@ function toggleLeftMenuSidebar() {
 // ========================================================
 async function logoutUser() {
     try {
-        alert("⏳ Clearing game session tokens safely...");
         await supabaseClient.auth.signOut();
         
         localStorage.clear();
@@ -248,6 +244,18 @@ function updateBalancesUI() {
     document.getElementById('diamond-balance').innerText = userProfile.diamonds + " 💎";
 }
 
+// Custom handler for standard floating Friends header clicks
+const friendsHeaderBtn = document.querySelector('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton');
+if (friendsHeaderBtn || document.getElementById('friendsButton')) {
+    const targetBtn = document.getElementById('friendsButton') || friendsHeaderBtn;
+    targetBtn.addEventListener('click', (e) => {
+        const panel = document.getElementById('friends-box-panel') || document.getElementById('friends-box');
+        if(panel) {
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+    });
+}
+
 function switchWithdrawFields() {
     let type = document.getElementById('withdraw-type').value;
     if(type === "UPI") {
@@ -285,6 +293,14 @@ async function applyManualReferralCode() {
     } catch(err) {
         console.log("Referral submission script failure:", err);
     }
+}
+
+// ========================================================
+// 🔒 REAL GATEWAY ROUTING ENGINE FOR BUYING DIAMONDS
+// ========================================================
+function buyDiamonds(price, count) {
+    // 🎯 FIX: Saare Alert popups aur automatic instant additions delete kar diye hain!
+    window.open("https://superprofile.bio/vp/taptappro-wallet-recharge", "_blank");
 }
 
 // ========================================================
@@ -395,8 +411,21 @@ function renderRealFriendsUI() {
     if (!friendsBox) return;
     friendsBox.innerHTML = "";
     
+    // UI Panel ko double check karke click par ensure show karwa rahe hain
+    const targetBoxSection = document.getElementById('friends-box-panel') || friendsBox;
+    if(targetBoxSection && targetBoxSection.style.display === 'none') {
+        targetBoxSection.style.display = 'block';
+    }
+    
     if (realFriendsList.length === 0) {
-        friendsBox.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No friends added yet. Invite your referrals!</p>`;
+        friendsBox.innerHTML = `
+            <div style="padding: 10px; text-align: center;">
+                <p style="font-size: 12px; color: #888;" id="no-friends-text">No friends added yet. Invite your referrals!</p>
+                <div style="margin-top: 8px; display: flex; gap: 5px; justify-content: center;">
+                    <input type="text" id="direct-friend-name" placeholder="Enter Friend Name..." style="background:#111; color:#fff; border:1px solid #333; padding:4px; font-size:11px; border-radius:4px;">
+                    <button onclick="let n=document.getElementById('direct-friend-name').value; if(n){realFriendsList.push({name:n,isFavorite:false}); renderRealFriendsUI();}else{alert('Enter name');}" style="background:#00e5ff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">Add Friend 🤝</button>
+                </div>
+            </div>`;
         document.getElementById('friend-counter-text').innerText = "0";
         return;
     }
@@ -404,7 +433,14 @@ function renderRealFriendsUI() {
     realFriendsList.sort((a, b) => b.isFavorite - a.isFavorite);
     document.getElementById('friend-counter-text').innerText = realFriendsList.length;
 
-    realFriendsList.forEach((friend, index) => {
+    friendsBox.innerHTML = `
+        <div style="margin-bottom: 8px; display: flex; gap: 5px; padding: 0 5px;">
+            <input type="text" id="direct-friend-name" placeholder="Add custom username..." style="background:#111; color:#fff; border:1px solid #333; padding:4px; font-size:11px; border-radius:4px; flex:1;">
+            <button onclick="let n=document.getElementById('direct-friend-name').value; if(n){realFriendsList.push({name:n,isFavorite:false}); renderRealFriendsUI();}else{alert('Enter name');}" style="background:#00e5ff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">Add 🤝</button>
+        </div>
+    `;
+
+   realFriendsList.forEach((friend, index) => {
         let starIcon = friend.isFavorite ? "⭐" : "🌟";
         let starStyle = friend.isFavorite ? "color: #ffa502; font-size: 16px; cursor: pointer; margin-right: 5px;" : "opacity: 0.4; font-size: 16px; cursor: pointer; margin-right: 5px;";
 
@@ -414,13 +450,12 @@ function renderRealFriendsUI() {
                     <span style="${starStyle}" onclick="toggleFavoriteFriendField(${index})">${starIcon}</span>
                     <span style="font-size: 13px;">👤 ${friend.name}</span>
                 </div>
-                <span class="invite-tag" onclick="inviteToLobby('${friend.name}')">Invite 🎮</span>
+                <span class="invite-tag" onclick="inviteToLobby('${friend.name}')" style="cursor:pointer; color:#00e5ff;">Invite 🎮</span>
             </div>
         `;
     });
 }
 
-// (Bache hue common functions bilkul un-touched hain)
 function toggleFavoriteFriendField(index) {
     realFriendsList[index].isFavorite = !realFriendsList[index].isFavorite;
     renderRealFriendsUI();
@@ -458,7 +493,7 @@ function launchGame() {
     statusBox.innerText = "🔍 Checking automated server & searching for online unknown players...";
 
     setTimeout(() => {
-     let realPlayersOnlineInLobby = false; 
+        let realPlayersOnlineInLobby = false; 
 
          if(realPlayersOnlineInLobby) {
             userProfile.diamonds -= 4;
@@ -550,7 +585,6 @@ async function toggleMic() {
     }
 }
 
-// (Common utilities settings)
 function showWinners() {
     let p1Name = document.getElementById('name-p1').innerText;
     let p2Name = document.getElementById('name-p2').innerText;
@@ -593,17 +627,6 @@ function showWinners() {
     }, 1000);
 }
 
-function buyDiamonds(price, count) {
-    alert("💳 Redirecting to Cosmofeed secure payment gateway for Add Diamonds... ");
-    window.open("https://superprofile.bio/vp/taptappro-wallet-recharge", "_blank");
-    
-    setTimeout(() => {
-        userProfile.diamonds += count;
-        alert(`✅ Payment Verified! Processed +${count} Diamonds safely to your account.`);
-        updateBalancesUI();
-    }, 2000);
-}
-
 function claimReward(cashValue, index) {
     let currentReferralsCount = registeredReferrals.length;
     let requiredTarget = rewardsMatrix[index].targetCount;
@@ -623,6 +646,7 @@ function claimReward(cashValue, index) {
     renderRewards();
 }
 
+// 🎯 UPGRADED RENDER SYSTEM FOR DYNAMIC DOCK MEMBER LOOP (e.g. 4/10 Members, 2/20 Members)
 function renderRewards() {
     const list = document.getElementById('rewards-list');
     if(!list) return;
@@ -632,6 +656,7 @@ function renderRewards() {
         let disabledAttr = "";
         let btnText = "[ CLAIM BONUS ]";
         let btnStyle = "background: #ff4757; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;";
+        
         if (item.status === 'claimed') {
             disabledAttr = "disabled";
             btnText = "✅ Claimed";
@@ -643,7 +668,13 @@ function renderRewards() {
             btnText = "🔓 Claim Now";
             btnStyle = "background: #ffa502; color: black; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; animation: pulse 1s infinite;";
         }
-        list.innerHTML += `<div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222; align-items: center;"><span style="font-size: 13px; color: ${currentReferralsCount >= item.targetCount ? '#00ff66' : '#fff'};">👥 ${item.members} — ${item.cash}</span><button class="claim-btn" ${currentReferralsCount < item.targetCount && item.status !== 'claimed' ? '' : disabledAttr} onclick="claimReward('${item.value}', ${index})" style="${btnStyle}">${btnText}</button></div>`;
+        
+        // 🚀 SMART STRING MAPPING: Format "X/Y Members" for cleaner progression visibility
+        let standardNumberString = item.members.replace(/[^0-9]/g, '');
+        let visualCounterString = `${currentReferralsCount}/${standardNumberString} Members`;
+        if(item.targetCount >= 40000) { visualCounterString = `${currentReferralsCount}/${item.targetCount} Members`; }
+
+        list.innerHTML += `<div class="reward-item-row" style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #222; align-items: center;"><span style="font-size: 13px; color: ${currentReferralsCount >= item.targetCount ? '#00ff66' : '#fff'};">👥 ${visualCounterString} — ${item.cash}</span><button class="claim-btn" ${currentReferralsCount < item.targetCount && item.status !== 'claimed' ? '' : disabledAttr} onclick="claimReward('${item.value}', ${index})" style="${btnStyle}">${btnText}</button></div>`;
     });
 }
 
@@ -743,20 +774,17 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         
         await checkUserSecurityStatus(session.user.id);
 
-        // 🚀 BADA BADLAV: Blank screen se bachne ke liye details form ko pehle hi screen par force-show karo!
         const formElement = document.getElementById('extra-details-form');
         const authZoneElement = document.getElementById('google-auth-zone');
         
         if (formElement) formElement.style.display = 'block';
         if (authZoneElement) authZoneElement.style.display = 'none';
 
-        // Auto-fill name field from Google account metadata if available
         if(session.user.user_metadata && session.user.user_metadata.full_name) {
             const nameInput = document.getElementById('reg-name');
             if (nameInput) nameInput.value = session.user.user_metadata.full_name;
         }
 
-        // Background check to see if user data already exists in the live 'users' table
         try {
             const { data: dbUser, error } = await supabaseClient
                 .from('users')
@@ -765,7 +793,6 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                 .single();
 
             if (!error && dbUser) {
-                // Agar user purana hai toh registration form chhupao aur seedhe main lobby load karo
                 if (formElement) formElement.style.display = 'none';
                 userProfile.name = dbUser.name;
                 userProfile.winnings = dbUser.winnings || 0;
