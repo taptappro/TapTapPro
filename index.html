@@ -241,9 +241,7 @@
 
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
-        <!-- 🎯 FIXED: Space hatakar solid brand name 'TapTapPro' kiya -->
         <h4 class="header-app-title">TapTapPro</h4>
-        <!-- 🎯 FIXED MOBILE CLICK EVENT HANDLER -->
         <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">Friends 👥 ➔</button>
     </div>
 
@@ -361,7 +359,6 @@
 
         <div class="panel center-panel" id="center-main-dashboard">
             <div class="lobby-card">
-                <!-- 🎯 FIXED: Space hatakar solid brand name 'TapTapPro' kiya -->
                 <h2 class="game-title">TapTapPro</h2>
                 <p class="game-time-banner">⏰ Operational Hours: 6:00 AM to 11:00 PM Daily</p>
                 
@@ -380,7 +377,6 @@
 
                 <div class="play-action-zone">
                     <p class="entry-notice">💎 4 Diamonds Entry Fee per Match</p>
-                    <!-- 🎯 FIXED: Extra Friends button ko yahan se poori tarah delete kar diya hai -->
                     <div style="display:flex; gap:10px; width:100%;">
                         <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()" style="flex:1;">START 4-PLAYER MATCH</button>
                     </div>
@@ -426,7 +422,7 @@
                 <h4>📥 Friend Requests</h4>
                 <div class="request-list-items" id="requests-box">
                     <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
-          </div>
+                </div>
             </div>
 
             <div class="section-card requests-card">
@@ -501,7 +497,6 @@
 
     <script src="dashboard-script.js"></script>
 
-    <!-- 🚀 MASTER SWITCH INJECTION FOR ALL STATE CLICKS -->
     <script type="text/javascript">
         function toggleRightMenuSidebar() {
             executeFriendsPanelOpenLogic();
@@ -510,25 +505,22 @@
         function executeFriendsPanelOpenLogic() {
             const rightSidebarPanel = document.getElementById('right-sidebar-panel');
             if (rightSidebarPanel) {
-                // Read exact runtime CSS computed configuration states
-                const currentDisplay = rightSidebarPanel.style.display || window.getComputedStyle(rightSidebarPanel).display;
+                // CSS active-open class toggling sequence for hardware sliding
+                rightSidebarPanel.classList.toggle('active-open');
                 
-                if (currentDisplay === 'none' || !currentDisplay) {
-                    // Force inject inline overrides to break background block constraints instantly
-                    rightSidebarPanel.style.setProperty('display', 'block', 'important');
-                    rightSidebarPanel.style.setProperty('visibility', 'visible', 'important');
-                    rightSidebarPanel.style.setProperty('opacity', '1', 'important');
-                    
+                // Backup inline overrides case styling logic conflicts
+                if (rightSidebarPanel.classList.contains('active-open')) {
+                    rightSidebarPanel.style.setProperty('display', 'flex', 'important');
                     if (typeof renderRealFriendsUI === 'function') {
                         renderRealFriendsUI();
                     }
                 } else {
-                    rightSidebarPanel.style.setProperty('display', 'none', 'important');
+                    rightSidebarPanel.style.removeProperty('display');
                 }
             }
         }
 
-        // Strict Event Handlers Capture loop for standalone desktop wrappers
+        // Strict Event Handlers Capture loop for standalone wrappers
         document.addEventListener('DOMContentLoaded', () => {
             const selectors = ['#friendsButtonMobile', '#right-sidebar-close-btn'];
             selectors.forEach(sel => {
@@ -545,8 +537,11 @@
             // Backup tracker if document intercepts standard dynamic triggers
             document.addEventListener('click', function(event) {
                 if (event.target && (event.target.innerText.includes('Friends 👥') || event.target.id === 'friendsButton' || event.target.id === 'friendsButtonMobile')) {
-                    event.preventDefault();
-                    executeFriendsPanelOpenLogic();
+                    // Panel area matches or text parameters loop check
+                    if (!event.target.closest('#right-sidebar-panel')) {
+                        event.preventDefault();
+                        executeFriendsPanelOpenLogic();
+                    }
                 }
             });
         });
