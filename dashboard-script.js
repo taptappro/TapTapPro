@@ -236,24 +236,11 @@ function loadDashboard() {
     updateBalancesUI();
     renderRewards();
     renderActiveReferrals();
-    renderRealFriendsUI();
 }
 
 function updateBalancesUI() {
     document.getElementById('winning-balance').innerText = "₹" + userProfile.winnings + ".00";
     document.getElementById('diamond-balance').innerText = userProfile.diamonds + " 💎";
-}
-
-// Custom handler for standard floating Friends header clicks
-const friendsHeaderBtn = document.querySelector('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton');
-if (friendsHeaderBtn || document.getElementById('friendsButton')) {
-    const targetBtn = document.getElementById('friendsButton') || friendsHeaderBtn;
-    targetBtn.addEventListener('click', (e) => {
-        const panel = document.getElementById('friends-box-panel') || document.getElementById('friends-box');
-        if(panel) {
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-        }
-    });
 }
 
 function switchWithdrawFields() {
@@ -299,7 +286,6 @@ async function applyManualReferralCode() {
 // 🔒 REAL GATEWAY ROUTING ENGINE FOR BUYING DIAMONDS
 // ========================================================
 function buyDiamonds(price, count) {
-    // 🎯 FIX: Saare Alert popups aur automatic instant additions delete kar diye hain!
     window.open("https://superprofile.bio/vp/taptappro-wallet-recharge", "_blank");
 }
 
@@ -404,18 +390,24 @@ function handleReq(btn, accepted) {
 }
 
 // ========================================================
-// 👥 FRIEND LIST AND MULTIPLAYER FUNCTIONS
+// 👥 FRIEND LIST AND MULTIPLAYER FUNCTIONS (UPGRADED FOR VISIBILITY & DYNAMIC OPEN)
 // ========================================================
 function renderRealFriendsUI() {
+    // 🎯 Find any available friends section container element dynamically
     const friendsBox = document.getElementById('friends-box');
+    const friendsPanel = document.getElementById('friends-box-panel') || 
+                         document.getElementById('friendsSectionArea') || 
+                         (friendsBox ? friendsBox.parentElement : null);
+    
+    // 🚀 FORCE INTERFACE ACTION: Open layout on call immediately
+    if (friendsPanel) {
+        friendsPanel.style.display = 'block';
+        friendsPanel.style.visibility = 'visible';
+        friendsPanel.style.opacity = '1';
+    }
+
     if (!friendsBox) return;
     friendsBox.innerHTML = "";
-    
-    // UI Panel ko double check karke click par ensure show karwa rahe hain
-    const targetBoxSection = document.getElementById('friends-box-panel') || friendsBox;
-    if(targetBoxSection && targetBoxSection.style.display === 'none') {
-        targetBoxSection.style.display = 'block';
-    }
     
     if (realFriendsList.length === 0) {
         friendsBox.innerHTML = `
@@ -426,12 +418,14 @@ function renderRealFriendsUI() {
                     <button onclick="let n=document.getElementById('direct-friend-name').value; if(n){realFriendsList.push({name:n,isFavorite:false}); renderRealFriendsUI();}else{alert('Enter name');}" style="background:#00e5ff; color:#000; border:none; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">Add Friend 🤝</button>
                 </div>
             </div>`;
-        document.getElementById('friend-counter-text').innerText = "0";
+        const counterText = document.getElementById('friend-counter-text');
+        if (counterText) counterText.innerText = "0";
         return;
     }
 
     realFriendsList.sort((a, b) => b.isFavorite - a.isFavorite);
-    document.getElementById('friend-counter-text').innerText = realFriendsList.length;
+    const counterText = document.getElementById('friend-counter-text');
+    if (counterText) counterText.innerText = realFriendsList.length;
 
     friendsBox.innerHTML = `
         <div style="margin-bottom: 8px; display: flex; gap: 5px; padding: 0 5px;">
@@ -440,7 +434,7 @@ function renderRealFriendsUI() {
         </div>
     `;
 
-   realFriendsList.forEach((friend, index) => {
+    realFriendsList.forEach((friend, index) => {
         let starIcon = friend.isFavorite ? "⭐" : "🌟";
         let starStyle = friend.isFavorite ? "color: #ffa502; font-size: 16px; cursor: pointer; margin-right: 5px;" : "opacity: 0.4; font-size: 16px; cursor: pointer; margin-right: 5px;";
 
@@ -669,7 +663,6 @@ function renderRewards() {
             btnStyle = "background: #ffa502; color: black; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; animation: pulse 1s infinite;";
         }
         
-        // 🚀 SMART STRING MAPPING: Format "X/Y Members" for cleaner progression visibility
         let standardNumberString = item.members.replace(/[^0-9]/g, '');
         let visualCounterString = `${currentReferralsCount}/${standardNumberString} Members`;
         if(item.targetCount >= 40000) { visualCounterString = `${currentReferralsCount}/${item.targetCount} Members`; }
@@ -803,5 +796,28 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         } catch(tableErr) {
             console.log("Safe onboarding check bypassed successfully:", tableErr);
         }
+    }
+});
+
+// ========================================================
+// 🛠️ UNIVERSAL EVENT LISTENER FOR FRIENDS BUTTON HANDLERS
+// ========================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 🎯 Catch both custom IDs and class tags on standard header triggers
+    const triggerButtons = document.querySelectorAll('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton');
+    triggerButtons.forEach(btn => {
+        btn.removeAttribute('onclick'); // Inline logic clean up
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            renderRealFriendsUI();
+        });
+    });
+});
+
+// Global backup listener to capture dynamically created buttons
+document.addEventListener('click', function(event) {
+    if (event.target && (event.target.id === 'friendsButton' || event.target.innerText.includes('Friends 👥'))) {
+        event.preventDefault();
+        renderRealFriendsUI();
     }
 });
