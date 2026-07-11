@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TapTap Pro - Ultimate Arcade Arena</title>
+    <title>TapTapPro - Ultimate Arcade Arena</title>
     <link rel="stylesheet" href="dashboard-style.css">
     
     <link rel="icon" type="image/png" href="7952.png?v=1">
@@ -211,7 +211,6 @@
         <div class="auth-box">
             <img src="7952.png" alt="TapTap Pro Logo" class="brand-logo-img">
             
-            <!-- MAIN GOOGLE AUTH SCREEN -->
             <div id="google-auth-zone">
                 <h2>Welcome to TapTap Pro</h2>
                 <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Fast & Secure Access to Arcade Arena</p>
@@ -227,7 +226,6 @@
                 </button>
             </div>
 
-            <!-- REGISTRATION EXTRA DETAILS FORM (Only shows for new users first time) -->
             <div id="extra-details-form" style="display:none;">
                 <h2>Complete Your Profile</h2>
                 <p style="color: #ffa500; font-size: 13px; margin-bottom: 15px;">Required only for your first login</p>
@@ -339,7 +337,6 @@
                     <div class="active-players-list" id="active-players-list-box"></div>
                 </div>
 
-                <!-- Premium Logout Button -->
                 <div class="logout-container">
                     <button class="premium-logout-btn" onclick="logoutUser()">🚪 LOGOUT ACCOUNT</button>
                 </div>
@@ -437,12 +434,12 @@
                 <span class="player-name" id="name-p1">FIRST USER</span>
                 <span class="add-friend-btn" onclick="sendFriendRequest(1, event)">➕</span>
             </div>
-     <span class="tap-instruction">👇 TAP HERE 👇</span>
+            <span class="tap-instruction">👇 TAP HERE 👇</span>
             <div class="score" id="score-p2">0</div>
         </button>
 
         <div class="center-controls">
-            <div class="timer" id="timer-display">30s</div>
+          <div class="timer" id="timer-display">30s</div>
             <div class="mic-section" onclick="toggleMic()">
                 <span id="mic-icon">🎙️</span>
                 <span class="mic-status-dot red-dot" id="mic-status"></span>
@@ -476,7 +473,7 @@
             <button class="start-game-btn" onclick="startGame()">PLAY GAME</button>
             <div style="display: flex; flex-direction: column; gap: 10px; max-width: 350px; margin: 20px; font-family: sans-serif;">
               <h3 style="color: #ff4757; margin-bottom: 5px;">💎 Select Diamond Package:</h3>
-                <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 30 Diamonds — ₹30</button>
+              <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 30 Diamonds — ₹30</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 50 Diamonds — ₹50</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 80 Diamonds — ₹80</button>
               <button class="shop-item-btn" onclick="window.open('https://superprofile.bio/vp/taptappro-wallet-recharge', '_blank')" style="background-color: #ff4757; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left;">💎 100 Diamonds — ₹100</button>
@@ -491,5 +488,48 @@
 
     <script src="dashboard-script.js"></script>
 
+    <script type="text/javascript">
+        // 1. Core Structural Panel Toggle Function
+        function toggleRightMenuSidebar() {
+            executeFriendsPanelOpenLogic();
+        }
+
+        function executeFriendsPanelOpenLogic() {
+            const rightSidebarPanel = document.getElementById('right-sidebar-panel');
+            if (rightSidebarPanel) {
+                // Safe evaluation parameters for inline visibility controls
+                const currentDisplay = window.getComputedStyle(rightSidebarPanel).display;
+                
+                if (currentDisplay === 'none' || rightSidebarPanel.style.display === 'none' || !rightSidebarPanel.style.display) {
+                    rightSidebarPanel.style.display = 'block';
+                    rightSidebarPanel.style.visibility = 'visible';
+                    rightSidebarPanel.style.opacity = '1';
+                    
+                    // Trigger live user list rendering matrices instantly
+                    if (typeof renderRealFriendsUI === 'function') {
+                        renderRealFriendsUI();
+                    }
+                } else {
+                    rightSidebarPanel.style.display = 'none';
+                }
+            }
+        }
+
+        // 2. Continuous Global Document Guard for Normal View Interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Dynamic check for all elements containing specific target parameters on layout interaction
+            document.addEventListener('click', function(event) {
+                const targetElement = event.target;
+                
+                if (targetElement) {
+                    // Check text values or functional inline classes globally
+                    if (targetElement.innerText.includes('Friends 👥') || targetElement.id === 'friendsButton') {
+                        event.preventDefault();
+                        executeFriendsPanelOpenLogic();
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
