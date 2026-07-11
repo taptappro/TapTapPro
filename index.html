@@ -242,7 +242,8 @@
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
         <h4 class="header-app-title">TapTap Pro</h4>
-        <button class="nav-toggle-icon-btn" onclick="toggleRightMenuSidebar()">Friends 👥 ➔</button>
+        <!-- 🎯 FIXED MOBILE CLICK EVENT HANDLER WITH HIGHEST VISIBILITY ORDER -->
+        <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">Friends 👥 ➔</button>
     </div>
 
     <div class="dashboard-container" id="dashboard-screen" style="display:none;">
@@ -377,7 +378,11 @@
 
                 <div class="play-action-zone">
                     <p class="entry-notice">💎 4 Diamonds Entry Fee per Match</p>
-                    <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()">START 4-PLAYER MATCH</button>
+                    <!-- 🎯 DESKTOP MATCH HEADER TRIGGER INTEGRATION FOR DYNAMIC OVERLAYS -->
+                    <div style="display:flex; gap:10px; width:100%;">
+                        <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()" style="flex:2;">START 4-PLAYER MATCH</button>
+                        <button class="huge-play-btn" id="friendsButtonDesktop" onclick="executeFriendsPanelOpenLogic()" style="flex:1; background:linear-gradient(135deg, #1e1e38, #2f3542); border:1px solid #ff4757; font-size:14px; white-space:nowrap; pointer-events:auto !important; cursor:pointer !important;">Friends 👥</button>
+                    </div>
                     <p id="matchmaking-status-text" style="margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px;"></p>
                     
                     <div class="referral-section">
@@ -401,8 +406,9 @@
             </div>
         </div>
 
-        <div class="panel right-panel" id="right-sidebar-panel">
-            <button class="sidebar-close-trigger" id="right-sidebar-close-btn" onclick="toggleRightMenuSidebar()">✕ Close Friends</button>
+        <div class="panel right-panel" id="right-sidebar-panel" style="pointer-events: auto !important;">
+            <!-- 🎯 FIXED CLOSE SIDEBAR BUTTON LINK VIA INLINE OVERRIDE -->
+            <button class="sidebar-close-trigger" id="right-sidebar-close-btn" onclick="executeFriendsPanelOpenLogic()" style="display: block !important; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">✕ Close Friends</button>
 
             <div class="section-card friends-card">
                 <h4>👥 Friend List (<span id="friend-counter-text">0</span>/300)</h4>
@@ -439,7 +445,7 @@
         </button>
 
         <div class="center-controls">
-          <div class="timer" id="timer-display">30s</div>
+            <div class="timer" id="timer-display">30s</div>
             <div class="mic-section" onclick="toggleMic()">
                 <span id="mic-icon">🎙️</span>
                 <span class="mic-status-dot red-dot" id="mic-status"></span>
@@ -488,8 +494,8 @@
 
     <script src="dashboard-script.js"></script>
 
+    <!-- 🚀 MASTER SWITCH INJECTION FOR ALL STATE CLICKS -->
     <script type="text/javascript">
-        // 1. Core Structural Panel Toggle Function
         function toggleRightMenuSidebar() {
             executeFriendsPanelOpenLogic();
         }
@@ -497,39 +503,47 @@
         function executeFriendsPanelOpenLogic() {
             const rightSidebarPanel = document.getElementById('right-sidebar-panel');
             if (rightSidebarPanel) {
-                // Safe evaluation parameters for inline visibility controls
-                const currentDisplay = window.getComputedStyle(rightSidebarPanel).display;
+                // Read exact runtime CSS computed configuration states
+                const currentDisplay = rightSidebarPanel.style.display || window.getComputedStyle(rightSidebarPanel).display;
                 
-                if (currentDisplay === 'none' || rightSidebarPanel.style.display === 'none' || !rightSidebarPanel.style.display) {
-                    rightSidebarPanel.style.display = 'block';
-                    rightSidebarPanel.style.visibility = 'visible';
-                    rightSidebarPanel.style.opacity = '1';
+                if (currentDisplay === 'none' || !currentDisplay) {
+                    // Force inject inline overrides to break background block constraints instantly
+                    rightSidebarPanel.style.setProperty('display', 'block', 'important');
+                    rightSidebarPanel.style.setProperty('visibility', 'visible', 'important');
+                    rightSidebarPanel.style.setProperty('opacity', '1', 'important');
                     
-                    // Trigger live user list rendering matrices instantly
                     if (typeof renderRealFriendsUI === 'function') {
                         renderRealFriendsUI();
                     }
                 } else {
-                    rightSidebarPanel.style.display = 'none';
+                    rightSidebarPanel.style.setProperty('display', 'none', 'important');
                 }
             }
         }
 
-        // 2. Continuous Global Document Guard for Normal View Interactions
+        // Strict Event Handlers Capture loop for standalone desktop wrappers
         document.addEventListener('DOMContentLoaded', () => {
-            // Dynamic check for all elements containing specific target parameters on layout interaction
-            document.addEventListener('click', function(event) {
-                const targetElement = event.target;
-                
-                if (targetElement) {
-                    // Check text values or functional inline classes globally
-                    if (targetElement.innerText.includes('Friends 👥') || targetElement.id === 'friendsButton') {
-                        event.preventDefault();
+            const selectors = ['#friendsButtonMobile', '#friendsButtonDesktop', '#right-sidebar-close-btn'];
+            selectors.forEach(sel => {
+                const el = document.querySelector(sel);
+                if(el) {
+                    el.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         executeFriendsPanelOpenLogic();
-                    }
+                    });
+                }
+            });
+            
+            // Backup tracker if document intercepts standard dynamic triggers
+            document.addEventListener('click', function(event) {
+                if (event.target && (event.target.innerText.includes('Friends 👥') || event.target.id === 'friendsButton')) {
+                    event.preventDefault();
+                    executeFriendsPanelOpenLogic();
                 }
             });
         });
     </script>
 </body>
 </html>
+            
