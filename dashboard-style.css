@@ -125,7 +125,7 @@ body, html {
 .right-panel {
     position: absolute;
     top: 60px; 
-    right: -100%; /* 🔥 FIXED: active-open class smoothly kaam kar sake */
+    right: -100% !important; /* 🔥 FIXED: baseline initial positioning lock */
     width: 85%;
     max-width: 360px;
     z-index: 999999 !important; /* 🔥 INCREASED: Sabse top priority window layer setup */
@@ -150,7 +150,7 @@ body, html {
 }
 
 .right-panel.active-open {
-    right: 0 !important;
+    right: 0 !important; /* 🔥 FORCE OVERRIDE: JavaScript class call hote hi sidebar screen ke andar khul jayega */
     display: flex !important;
     flex-direction: column !important;
     visibility: visible !important;
@@ -439,4 +439,4 @@ position: absolute;
 }
 .sidebar-close-trigger {
     display: block !important; /* Side panels ke andar cross close text visible */
-                    }
+    }
