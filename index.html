@@ -242,7 +242,8 @@
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
         <h4 class="header-app-title">TapTapPro</h4>
-        <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">Friends 👥 ➔</button>
+        <!-- 🎯 FIXED: Button par hardware layer bypass aur top priority stack apply kar diya hai -->
+        <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="position: relative !important; pointer-events: auto !important; cursor: pointer !important; z-index: 9999999 !important;">Friends 👥 ➔</button>
     </div>
 
     <div class="dashboard-container" id="dashboard-screen" style="display:none;">
@@ -497,6 +498,7 @@
 
     <script src="dashboard-script.js"></script>
 
+    <!-- 🚀 MASTER SWITCH INJECTION FOR ALL STATE CLICKS -->
     <script type="text/javascript">
         function toggleRightMenuSidebar() {
             executeFriendsPanelOpenLogic();
