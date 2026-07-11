@@ -79,7 +79,7 @@ body, html {
     background: #14141e;
     border-left: 2px solid #222;
     border-right: 2px solid #222;
-    overflow: hidden;
+    overflow: visible !important; /* 🔥 FIXED: hidden ko override kiya taaki sidebar screen par dikh sake */
 }
 
 /* Base Panel Default Setup */
@@ -109,7 +109,7 @@ body, html {
     left: -100%; 
     width: 85%;  
     max-width: 360px;
-    z-index: 10000;
+    z-index: 999999 !important; /* 🔥 INCREASED: Taaki panel layers sabke upar khule */
     border-right: 2px solid #ff4757;
     transition: left 0.3s ease-in-out; 
     box-shadow: 10px 0 25px rgba(0,0,0,0.8);
@@ -125,10 +125,10 @@ body, html {
 .right-panel {
     position: absolute;
     top: 60px; 
-    right: -100%; /* 🔥 FIXED: !important hataya taaki active-open class smoothly kaam kar sake */
+    right: -100%; /* 🔥 FIXED: active-open class smoothly kaam kar sake */
     width: 85%;
     max-width: 360px;
-    z-index: 10000; /* 🔥 INCREASED: Taaki panel desktop/mobile dono par sabse upar layer par khule */
+    z-index: 999999 !important; /* 🔥 INCREASED: Sabse top priority window layer setup */
     border-left: 2px solid #ff4757;
     background: #11111a;
     transition: right 0.3s ease-in-out; 
@@ -153,6 +153,8 @@ body, html {
     right: 0 !important;
     display: flex !important;
     flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 
@@ -254,7 +256,7 @@ body, html {
 .green-mic { background: #34c759; color: white; box-shadow: 0 0 8px #34c759; }
 
 .play-action-zone { margin: 25px 0; padding: 0 10px; }
-.entry-notice = { color: #00e5ff; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
+.entry-notice { color: #00e5ff; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
 .huge-play-btn {
     width: 100%; padding: 16px; font-size: 20px; font-weight: bold;
     background: linear-gradient(135deg, #ff3b30, #ff9500); border: none; color: white;
@@ -432,7 +434,9 @@ position: absolute;
 .mobile-header-navigation {
     display: flex !important; /* Hamesha visible phone size layout mein */
     height: 60px;
+    position: relative;
+    z-index: 9999999 !important; /* 🔥 FIXED: Pure navbar wrapper ko topmost priority layer par rakha */
 }
 .sidebar-close-trigger {
     display: block !important; /* Side panels ke andar cross close text visible */
-}
+                    }
