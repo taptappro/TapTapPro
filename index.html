@@ -241,8 +241,9 @@
 
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
-        <h4 class="header-app-title">TapTap Pro</h4>
-        <!-- 🎯 FIXED MOBILE CLICK EVENT HANDLER WITH HIGHEST VISIBILITY ORDER -->
+        <!-- 🎯 FIXED: Space hatakar solid brand name 'TapTapPro' kiya -->
+        <h4 class="header-app-title">TapTapPro</h4>
+        <!-- 🎯 FIXED MOBILE CLICK EVENT HANDLER -->
         <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">Friends 👥 ➔</button>
     </div>
 
@@ -360,7 +361,8 @@
 
         <div class="panel center-panel" id="center-main-dashboard">
             <div class="lobby-card">
-                <h2 class="game-title">TapTap Pro</h2>
+                <!-- 🎯 FIXED: Space hatakar solid brand name 'TapTapPro' kiya -->
+                <h2 class="game-title">TapTapPro</h2>
                 <p class="game-time-banner">⏰ Operational Hours: 6:00 AM to 11:00 PM Daily</p>
                 
                 <div class="voice-lobby">
@@ -378,10 +380,9 @@
 
                 <div class="play-action-zone">
                     <p class="entry-notice">💎 4 Diamonds Entry Fee per Match</p>
-                    <!-- 🎯 DESKTOP MATCH HEADER TRIGGER INTEGRATION FOR DYNAMIC OVERLAYS -->
+                    <!-- 🎯 FIXED: Extra Friends button ko yahan se poori tarah delete kar diya hai -->
                     <div style="display:flex; gap:10px; width:100%;">
-                        <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()" style="flex:2;">START 4-PLAYER MATCH</button>
-                        <button class="huge-play-btn" id="friendsButtonDesktop" onclick="executeFriendsPanelOpenLogic()" style="flex:1; background:linear-gradient(135deg, #1e1e38, #2f3542); border:1px solid #ff4757; font-size:14px; white-space:nowrap; pointer-events:auto !important; cursor:pointer !important;">Friends 👥</button>
+                        <button class="huge-play-btn" id="main-play-btn" onclick="launchGame()" style="flex:1;">START 4-PLAYER MATCH</button>
                     </div>
                     <p id="matchmaking-status-text" style="margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px;"></p>
                     
@@ -407,7 +408,6 @@
         </div>
 
         <div class="panel right-panel" id="right-sidebar-panel" style="pointer-events: auto !important;">
-            <!-- 🎯 FIXED CLOSE SIDEBAR BUTTON LINK VIA INLINE OVERRIDE -->
             <button class="sidebar-close-trigger" id="right-sidebar-close-btn" onclick="executeFriendsPanelOpenLogic()" style="display: block !important; pointer-events: auto !important; cursor: pointer !important; z-index: 99999 !important;">✕ Close Friends</button>
 
             <div class="section-card friends-card">
@@ -420,6 +420,13 @@
                 <div class="friend-list-items" id="friends-box">
                     <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-friends-text">No friends added yet. Invite your referrals!</p>
                 </div>
+            </div>
+
+            <div class="section-card requests-card">
+                <h4>📥 Friend Requests</h4>
+                <div class="request-list-items" id="requests-box">
+                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
+          </div>
             </div>
 
             <div class="section-card requests-card">
@@ -523,7 +530,7 @@
 
         // Strict Event Handlers Capture loop for standalone desktop wrappers
         document.addEventListener('DOMContentLoaded', () => {
-            const selectors = ['#friendsButtonMobile', '#friendsButtonDesktop', '#right-sidebar-close-btn'];
+            const selectors = ['#friendsButtonMobile', '#right-sidebar-close-btn'];
             selectors.forEach(sel => {
                 const el = document.querySelector(sel);
                 if(el) {
@@ -537,7 +544,7 @@
             
             // Backup tracker if document intercepts standard dynamic triggers
             document.addEventListener('click', function(event) {
-                if (event.target && (event.target.innerText.includes('Friends 👥') || event.target.id === 'friendsButton')) {
+                if (event.target && (event.target.innerText.includes('Friends 👥') || event.target.id === 'friendsButton' || event.target.id === 'friendsButtonMobile')) {
                     event.preventDefault();
                     executeFriendsPanelOpenLogic();
                 }
@@ -546,4 +553,3 @@
     </script>
 </body>
 </html>
-            
