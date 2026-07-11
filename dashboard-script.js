@@ -362,12 +362,12 @@ function filterActiveReferrals() {
 }
 
 // ========================================================
-// 🤝 REAL FRIEND REQUEST CONTROLLERS
+// 🔒 REAL GATEWAY ROUTING ENGINE FOR BUYING DIAMONDS
 // ========================================================
 function handleReq(btn, accepted) {
     if(accepted) {
         if(realFriendsList.length >= 300) { 
-            alert("❌ Friend List Full! Max 300 members limit reached."); 
+            alert("❌ Friend List Full! Max 300 members limit reached.");
             return; 
         }
         
@@ -393,17 +393,12 @@ function handleReq(btn, accepted) {
 // 👥 FRIEND LIST AND MULTIPLAYER FUNCTIONS (UPGRADED FOR VISIBILITY & DYNAMIC OPEN)
 // ========================================================
 function renderRealFriendsUI() {
-    // 🎯 Find any available friends section container element dynamically
     const friendsBox = document.getElementById('friends-box');
-    const friendsPanel = document.getElementById('friends-box-panel') || 
-                         document.getElementById('friendsSectionArea') || 
-                         (friendsBox ? friendsBox.parentElement : null);
+    const rightSidebarPanel = document.getElementById('right-sidebar-panel');
     
-    // 🚀 FORCE INTERFACE ACTION: Open layout on call immediately
-    if (friendsPanel) {
-        friendsPanel.style.display = 'block';
-        friendsPanel.style.visibility = 'visible';
-        friendsPanel.style.opacity = '1';
+    // 🚀 FORCE INTERFACE ACTION: active-open class toggle sequence via JS hardware bridge
+    if (rightSidebarPanel) {
+        rightSidebarPanel.classList.toggle('active-open');
     }
 
     if (!friendsBox) return;
@@ -640,7 +635,7 @@ function claimReward(cashValue, index) {
     renderRewards();
 }
 
-// 🎯 UPGRADED RENDER SYSTEM FOR DYNAMIC DOCK MEMBER LOOP (e.g. 4/10 Members, 2/20 Members)
+// 🎯 BINDING PROGRESSIVE TRACKER OVERLAYS
 function renderRewards() {
     const list = document.getElementById('rewards-list');
     if(!list) return;
@@ -739,7 +734,6 @@ async function checkUserSecurityStatus(userId) {
         }
     } catch(err) { console.log("Security routing parameter check issue:", err); }
 }
-
 // ========================================================
 // ⚡ STRICT AUTO SESSION TRACKER HOOK (PATCHED FOR BLANK SCREEN)
 // ========================================================
@@ -803,21 +797,34 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 // 🛠️ UNIVERSAL EVENT LISTENER FOR FRIENDS BUTTON HANDLERS
 // ========================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 🎯 Catch both custom IDs and class tags on standard header triggers
-    const triggerButtons = document.querySelectorAll('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton');
+    // 🎯 MASTER INTERCEPTOR OVERRIDE LINK PIPELINE FOR CLICKS
+    const triggerButtons = document.querySelectorAll('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton, #friendsButtonMobile');
     triggerButtons.forEach(btn => {
-        btn.removeAttribute('onclick'); // Inline logic clean up
+        btn.removeAttribute('onclick'); // Inline cleanup trigger
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            renderRealFriendsUI();
+            e.stopPropagation();
+            const rightSidebarPanel = document.getElementById('right-sidebar-panel');
+            if (rightSidebarPanel) {
+                rightSidebarPanel.classList.toggle('active-open');
+                if (rightSidebarPanel.classList.contains('active-open') && typeof renderRealFriendsUI === 'function') {
+                    // Force refresh friend counters internally
+                    const counterText = document.getElementById('friend-counter-text');
+                    if (counterText) counterText.innerText = realFriendsList.length;
+                }
+            }
         });
     });
 });
 
-// Global backup listener to capture dynamically created buttons
+// Global backup structural engine tracking click injection routines
 document.addEventListener('click', function(event) {
-    if (event.target && (event.target.id === 'friendsButton' || event.target.innerText.includes('Friends 👥'))) {
+    if (event.target && (event.target.id === 'friendsButton' || event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
         event.preventDefault();
-        renderRealFriendsUI();
+        event.stopPropagation();
+        const rightSidebarPanel = document.getElementById('right-sidebar-panel');
+        if (rightSidebarPanel) {
+            rightSidebarPanel.classList.toggle('active-open');
+        }
     }
 });
