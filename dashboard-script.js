@@ -443,6 +443,7 @@ function toggleFavoriteFriendField(index) {
     renderRealFriendsUI();
 }
 
+// 🎯 EXTRA UTILITIES FUNCTIONS SYNCED
 function filterFriendList() {
     let query = document.getElementById('friend-search-bar').value.toLowerCase().trim();
     let items = document.querySelectorAll('#friends-box .friend-item');
@@ -726,8 +727,8 @@ async function checkUserSecurityStatus(userId) {
             window.location.reload();
         }
     } catch(err) { console.log("Security routing parameter check issue:", err); }
-                            }
-    // ========================================================
+}
+// ========================================================
 // ⚡ STRICT AUTO SESSION TRACKER HOOK (PATCHED FOR BLANK SCREEN)
 // ========================================================
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -813,7 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.removeAttribute('onclick'); // Cleanup legacy attributes
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             executeFriendsPanelOpenLogic();
         });
     });
@@ -824,7 +824,6 @@ document.addEventListener('click', function(event) {
     if (event.target && (event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
         if (!event.target.closest('#right-sidebar-panel')) {
             event.preventDefault();
-            event.stopPropagation();
             executeFriendsPanelOpenLogic();
         }
     }
