@@ -394,13 +394,6 @@ function handleReq(btn, accepted) {
 // ========================================================
 function renderRealFriendsUI() {
     const friendsBox = document.getElementById('friends-box');
-    const rightSidebarPanel = document.getElementById('right-sidebar-panel');
-    
-    // 🚀 FORCE INTERFACE ACTION: active-open class toggle sequence via JS hardware bridge
-    if (rightSidebarPanel) {
-        rightSidebarPanel.classList.toggle('active-open');
-    }
-
     if (!friendsBox) return;
     friendsBox.innerHTML = "";
     
@@ -734,6 +727,7 @@ async function checkUserSecurityStatus(userId) {
         }
     } catch(err) { console.log("Security routing parameter check issue:", err); }
 }
+
 // ========================================================
 // ⚡ STRICT AUTO SESSION TRACKER HOOK (PATCHED FOR BLANK SCREEN)
 // ========================================================
@@ -794,37 +788,45 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 });
 
 // ========================================================
-// 🛠️ UNIVERSAL EVENT LISTENER FOR FRIENDS BUTTON HANDLERS
+// 🛠️ MODERN TOGGLING CONTROLLER INTERCEPTOR FOR RIGHT PANEL
 // ========================================================
+function executeFriendsPanelOpenLogic() {
+    const rightSidebarPanel = document.getElementById('right-sidebar-panel');
+    if (rightSidebarPanel) {
+        rightSidebarPanel.classList.toggle('active-open');
+        
+        // Dynamic visibility sync logic
+        if (rightSidebarPanel.classList.contains('active-open')) {
+            rightSidebarPanel.style.setProperty('display', 'flex', 'important');
+            if (typeof renderRealFriendsUI === 'function') {
+                renderRealFriendsUI();
+            }
+        } else {
+            rightSidebarPanel.style.removeProperty('display');
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 🎯 MASTER INTERCEPTOR OVERRIDE LINK PIPELINE FOR CLICKS
-    const triggerButtons = document.querySelectorAll('.friends-btn-nav, [onclick*="renderRealFriendsUI"], #friendsButton, #friendsButtonMobile');
+    // Top navbar standard button captures
+    const triggerButtons = document.querySelectorAll('#friendsButtonMobile, #right-sidebar-close-btn');
     triggerButtons.forEach(btn => {
-        btn.removeAttribute('onclick'); // Inline cleanup trigger
+        btn.removeAttribute('onclick'); // Cleanup legacy attributes
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const rightSidebarPanel = document.getElementById('right-sidebar-panel');
-            if (rightSidebarPanel) {
-                rightSidebarPanel.classList.toggle('active-open');
-                if (rightSidebarPanel.classList.contains('active-open') && typeof renderRealFriendsUI === 'function') {
-                    // Force refresh friend counters internally
-                    const counterText = document.getElementById('friend-counter-text');
-                    if (counterText) counterText.innerText = realFriendsList.length;
-                }
-            }
+            executeFriendsPanelOpenLogic();
         });
     });
 });
 
-// Global backup structural engine tracking click injection routines
+// Structural document global capture routine bypass loop
 document.addEventListener('click', function(event) {
-    if (event.target && (event.target.id === 'friendsButton' || event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
-        event.preventDefault();
-        event.stopPropagation();
-        const rightSidebarPanel = document.getElementById('right-sidebar-panel');
-        if (rightSidebarPanel) {
-            rightSidebarPanel.classList.toggle('active-open');
+    if (event.target && (event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
+        if (!event.target.closest('#right-sidebar-panel')) {
+            event.preventDefault();
+            event.stopPropagation();
+            executeFriendsPanelOpenLogic();
         }
     }
 });
