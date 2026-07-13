@@ -498,22 +498,27 @@
         function executeFriendsPanelOpenLogic() {
             const rightSidebarPanel = document.getElementById('right-sidebar-panel');
             if (rightSidebarPanel) {
-                // CSS active-open class toggling sequence for hardware sliding
+                // 🎯 PURE TOGGLING HOOK FOR DIRECT HARDWARE DRAWER ACTIONS
                 rightSidebarPanel.classList.toggle('active-open');
                 
-                // Backup inline overrides case styling logic conflicts
+                // Absolute structural layout forcing pipeline
                 if (rightSidebarPanel.classList.contains('active-open')) {
                     rightSidebarPanel.style.setProperty('display', 'flex', 'important');
+                    rightSidebarPanel.style.setProperty('visibility', 'visible', 'important');
+                    rightSidebarPanel.style.setProperty('opacity', '1', 'important');
+                    
                     if (typeof renderRealFriendsUI === 'function') {
                         renderRealFriendsUI();
                     }
                 } else {
                     rightSidebarPanel.style.removeProperty('display');
+                    rightSidebarPanel.style.removeProperty('visibility');
+                    rightSidebarPanel.style.removeProperty('opacity');
                 }
             }
         }
 
-        // Strict Event Handlers Capture loop for standalone wrappers
+        // DOM dynamic bindings loop trigger
         document.addEventListener('DOMContentLoaded', () => {
             const selectors = ['#friendsButtonMobile', '#right-sidebar-close-btn'];
             selectors.forEach(sel => {
@@ -527,12 +532,12 @@
                 }
             });
             
-            // Backup tracker if document intercepts standard dynamic triggers
+            // Core fallback interceptor loops
             document.addEventListener('click', function(event) {
-                if (event.target && (event.target.innerText.includes('Friends 👥') || event.target.id === 'friendsButton' || event.target.id === 'friendsButtonMobile')) {
-                    // Panel area matches or text parameters loop check
+                if (event.target && (event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
                     if (!event.target.closest('#right-sidebar-panel')) {
                         event.preventDefault();
+                        event.stopPropagation();
                         executeFriendsPanelOpenLogic();
                     }
                 }
