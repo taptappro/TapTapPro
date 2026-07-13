@@ -242,7 +242,8 @@
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
         <h4 class="header-app-title">TapTapPro</h4>
-        <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="position: relative !important; pointer-events: auto !important; cursor: pointer !important; z-index: 9999999 !important;">Friends 👥 ➔</button>
+        <!-- 🎯 FIXED: Button ke andar se ziddi baahar nikla arrow uda kar clean 'Friends 👥' design set kar diya hai -->
+        <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="position: relative !important; pointer-events: auto !important; cursor: pointer !important; z-index: 9999999 !important;">Friends 👥</button>
     </div>
 
     <div class="dashboard-container" id="dashboard-screen" style="display:none;">
@@ -490,6 +491,7 @@
 
     <script src="dashboard-script.js"></script>
 
+    <!-- 🚀 HARD HARDWARE SWAP ENGINE FOR DRAWER INTERFACES -->
     <script type="text/javascript">
         function toggleRightMenuSidebar() {
             executeFriendsPanelOpenLogic();
@@ -498,10 +500,10 @@
         function executeFriendsPanelOpenLogic() {
             const rightSidebarPanel = document.getElementById('right-sidebar-panel');
             if (rightSidebarPanel) {
-                // 🎯 PURE TOGGLING HOOK FOR DIRECT HARDWARE DRAWER ACTIONS
+                // Class toggling routine block
                 rightSidebarPanel.classList.toggle('active-open');
                 
-                // Absolute structural layout forcing pipeline
+                // Force sync hardware layout structure
                 if (rightSidebarPanel.classList.contains('active-open')) {
                     rightSidebarPanel.style.setProperty('display', 'flex', 'important');
                     rightSidebarPanel.style.setProperty('visibility', 'visible', 'important');
@@ -518,7 +520,7 @@
             }
         }
 
-        // DOM dynamic bindings loop trigger
+        // Direct DOM content layout binders injection routine
         document.addEventListener('DOMContentLoaded', () => {
             const selectors = ['#friendsButtonMobile', '#right-sidebar-close-btn'];
             selectors.forEach(sel => {
@@ -532,7 +534,7 @@
                 }
             });
             
-            // Core fallback interceptor loops
+            // Backup standalone continuous monitor loop
             document.addEventListener('click', function(event) {
                 if (event.target && (event.target.id === 'friendsButtonMobile' || event.target.innerText.includes('Friends 👥'))) {
                     if (!event.target.closest('#right-sidebar-panel')) {
