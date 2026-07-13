@@ -242,7 +242,6 @@
     <div class="mobile-header-navigation" id="mobile-top-navbar" style="display: none;">
         <button class="nav-toggle-icon-btn" onclick="toggleLeftMenuSidebar()">☰ Menu</button>
         <h4 class="header-app-title">TapTapPro</h4>
-        <!-- 🎯 FIXED: Button par hardware layer bypass aur top priority stack apply kar diya hai -->
         <button class="nav-toggle-icon-btn" id="friendsButtonMobile" onclick="executeFriendsPanelOpenLogic()" style="position: relative !important; pointer-events: auto !important; cursor: pointer !important; z-index: 9999999 !important;">Friends 👥 ➔</button>
     </div>
 
@@ -425,13 +424,6 @@
                     <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
                 </div>
             </div>
-
-            <div class="section-card requests-card">
-                <h4>📥 Friend Requests</h4>
-                <div class="request-list-items" id="requests-box">
-                    <p style="font-size: 12px; color: #888; text-align: center; padding: 10px;" id="no-requests-text">No pending friend requests.</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -498,7 +490,6 @@
 
     <script src="dashboard-script.js"></script>
 
-    <!-- 🚀 MASTER SWITCH INJECTION FOR ALL STATE CLICKS -->
     <script type="text/javascript">
         function toggleRightMenuSidebar() {
             executeFriendsPanelOpenLogic();
