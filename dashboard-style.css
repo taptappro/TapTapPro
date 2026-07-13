@@ -79,7 +79,7 @@ body, html {
     background: #14141e;
     border-left: 2px solid #222;
     border-right: 2px solid #222;
-    overflow: visible !important; /* 🔥 FIXED: hidden ko override kiya taaki sidebar screen par dikh sake */
+    overflow: hidden !important; /* 🎯 FIXED: visible hataya taaki drawers default state me screen se hat sakein */
 }
 
 /* Base Panel Default Setup */
@@ -106,10 +106,10 @@ body, html {
 .left-panel {
     position: absolute;
     top: 60px; 
-    left: -100%; 
+    left: -105% !important; /* 🎯 FIXED: Initial screen placement locked outside viewport layout */
     width: 85%;  
     max-width: 360px;
-    z-index: 999999 !important; /* 🔥 INCREASED: Taaki panel layers sabke upar khule */
+    z-index: 999999 !important; /* Taaki panel layers sabke upar khule */
     border-right: 2px solid #ff4757;
     transition: left 0.3s ease-in-out; 
     box-shadow: 10px 0 25px rgba(0,0,0,0.8);
@@ -125,10 +125,10 @@ body, html {
 .right-panel {
     position: absolute;
     top: 60px; 
-    right: -100% !important; /* 🔥 FIXED: baseline initial positioning lock */
+    right: -105% !important; /* 🎯 FIXED: Initial screen placement locked outside viewport layout */
     width: 85%;
     max-width: 360px;
-    z-index: 999999 !important; /* 🔥 INCREASED: Sabse top priority window layer setup */
+    z-index: 999999 !important; /* Sabse top priority window layer setup */
     border-left: 2px solid #ff4757;
     background: #11111a;
     transition: right 0.3s ease-in-out; 
@@ -150,7 +150,7 @@ body, html {
 }
 
 .right-panel.active-open {
-    right: 0 !important; /* 🔥 FORCE OVERRIDE: JavaScript class call hote hi sidebar screen ke andar khul jayega */
+    right: 0 !important; /* 🎯 FIXED: Trigger click hote hi drawer smooth slide ho kar full samne screen par dikhega */
     display: flex !important;
     flex-direction: column !important;
     visibility: visible !important;
@@ -435,8 +435,8 @@ position: absolute;
     display: flex !important; /* Hamesha visible phone size layout mein */
     height: 60px;
     position: relative;
-    z-index: 9999999 !important; /* 🔥 FIXED: Pure navbar wrapper ko topmost priority layer par rakha */
+    z-index: 9999999 !important; /* Pure navbar wrapper ko topmost priority layer par rakha */
 }
 .sidebar-close-trigger {
     display: block !important; /* Side panels ke andar cross close text visible */
-    }
+             }
