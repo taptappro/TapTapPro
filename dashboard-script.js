@@ -179,6 +179,17 @@ function toggleLeftMenuSidebar() {
     }
 }
 
+/* 🎯 FIXED: Left sidebar ke bilkul niche right side menu panel ka logic safely inject kar diya hai */
+function toggleRightMenuSidebar() {
+    const rightPanel = document.getElementById('right-sidebar-panel');
+    if(rightPanel) {
+        rightPanel.classList.toggle('active-open');
+        if (rightPanel.classList.contains('active-open') && typeof renderRealFriendsUI === 'function') {
+            renderRealFriendsUI();
+        }
+    }
+}
+
 // ========================================================
 // 🚪 PREMIUM LOGOUT USER FUNCTION
 // ========================================================
@@ -717,6 +728,7 @@ async function initVoiceEngine() {
     } catch (e) { console.log("Voice issue:", e); }
 }
 
+/* 🎯 FIXED: checkUserSecurityStatus ka syntax bracket band kar diya hai taaki upar ki functions crash na ho */
 async function checkUserSecurityStatus(userId) {
     if (!userId) return;
     try {
@@ -727,8 +739,8 @@ async function checkUserSecurityStatus(userId) {
             window.location.reload();
         }
     } catch(err) { console.log("Security routing parameter check issue:", err); }
-}
-// ========================================================
+                            }
+  // ========================================================
 // ⚡ STRICT AUTO SESSION TRACKER HOOK (PATCHED FOR BLANK SCREEN)
 // ========================================================
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -791,27 +803,14 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 // 🛠️ MODERN TOGGLING CONTROLLER INTERCEPTOR FOR RIGHT PANEL
 // ========================================================
 function executeFriendsPanelOpenLogic() {
-    const rightSidebarPanel = document.getElementById('right-sidebar-panel');
-    if (rightSidebarPanel) {
-        rightSidebarPanel.classList.toggle('active-open');
-        
-        // Dynamic visibility sync logic
-        if (rightSidebarPanel.classList.contains('active-open')) {
-            rightSidebarPanel.style.setProperty('display', 'flex', 'important');
-            if (typeof renderRealFriendsUI === 'function') {
-                renderRealFriendsUI();
-            }
-        } else {
-            rightSidebarPanel.style.removeProperty('display');
-        }
-    }
+    /* 🎯 FIXED: Direct structural execution linked to our global function switch */
+    toggleRightMenuSidebar();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     // Top navbar standard button captures
     const triggerButtons = document.querySelectorAll('#friendsButtonMobile, #right-sidebar-close-btn');
     triggerButtons.forEach(btn => {
-        btn.removeAttribute('onclick'); // Cleanup legacy attributes
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             executeFriendsPanelOpenLogic();
